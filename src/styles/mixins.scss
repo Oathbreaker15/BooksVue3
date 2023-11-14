@@ -1,0 +1,27 @@
+@mixin flexCenteredBetween() {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin flexCentered() {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin iconsCommonSize() {
+  width: 20px;
+  height: 20px;
+}
+
+@mixin iconsCommonSizeMob() {
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+}
+
+@mixin activeMobIcon() {
+  border: 2px solid $main;
+  border-radius: 8px
+}

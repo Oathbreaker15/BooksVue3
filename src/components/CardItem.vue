@@ -1,0 +1,238 @@
+<script setup lang="ts">
+  import { defineProps, computed } from 'vue';
+  import type { PropType } from 'vue';
+  import { favsStore } from '@/stores/favs';
+  import type { Card } from '@/types/card/card';
+  import bookImg from '@/assets/icons/black-book.svg';
+
+  const props = defineProps({
+    card: {
+      required: true,
+      type: Object as PropType<Card>,
+    },
+  }); 
+  const {card} = props;
+  const store = favsStore();
+  const imgLink = computed(()=>{
+    return card.cover_edition_key 
+                ? `https://covers.openlibrary.org/b/olid/${card.cover_edition_key}-M.jpg` 
+                : bookImg;
+  });
+
+  const favBooksIndex = computed(() => store.getFavBookIndex(card));
+</script>
+
+<template>
+  <section class="books-item">
+    <div class="books-item__img">
+      <img :src="imgLink" :alt="card.title">
+    </div>
+
+    <section class="books-item__content">
+      <section class="books-item__content-info">
+        <p class="books-item__content-info-genre">{{ card.subject?.[0] ?? 'Жанр не указан' }}</p>
+        <p class="books-item__content-info-title">{{ card.title }}</p>
+        <p class="books-item__content-info-author">{{ card.author_name?.[0] ?? 'Автор не указан' }}</p>
+      </section>
+
+      <div @click="store.isBookInFavs(card) ? store.removeFromFavs(favBooksIndex) : store.addToFavs(card);" 
+      :class="`books-item__content-fav-btn${store.isBookInFavs(card) ? '_active' : ''}`">
+      </div>
+    </section>
+  </section>
+</template>
+
+<style scoped lang="scss">
+  @import '../styles/vars.scss';
+
+  .books-item {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+
+    &:hover {
+      box-shadow: 0 16px 24px 0 rgba(0,13,51,.2);
+
+      .books-item__content {
+        bottom: 0;
+      }
+    } 
+  
+    &__img {
+      padding: 12px;
+      box-sizing: border-box;
+      background: $book-item-background;
+  
+      img {
+        width: 100%;
+        height: 100%;
+        max-height: 384px;
+        min-height: 384px;
+      }
+    }
+  
+    @media screen and (min-width: 1095px) {
+      &__content {
+      padding: 12px 10px;
+      background: $main;
+      color: $white;
+      position: absolute;
+      bottom: -68px;
+      width: 100%;
+      box-sizing: border-box;
+      transition: bottom 0.2s ease-out;
+      }
+    }
+
+    @media screen and (max-width: 1095px) {
+      &__content {
+        padding: 12px 10px;
+        background: $main;
+        color: $white;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+
+    &__content {
+      &-info-genre,
+      &-info-title,
+      &-info-title {
+        margin: 0;
+      }
+  
+      &-info-title {
+        font-weight: 600;
+      }
+  
+      &-fav-btn,
+      &-fav-btn_active {
+        width: 36px;
+        height: 32px;
+        background: $main;
+        border: 2px solid $white;
+        border-radius: 6px;
+        margin-top: 38px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+  
+        &:hover{
+          background-color: $white;
+  
+          &::before {
+            background: url(../src/assets/icons/favorite-white.svg);
+          }
+        } 
+
+        &:active{
+          background: #bbb;
+        } 
+  
+        &::before {
+          content: '';
+          width: 20px;
+          height: 20px;
+          background: url(../src/assets/icons/favorite-black.svg) no-repeat 0 0;
+        }
+  
+        &_active {
+          background-color: $white;
+  
+          &::before {
+            background: url(../src/assets/icons/favorite-white.svg);
+          }
+        }
+      }
+    }
+  }
+
+  .books-item__content-info-author {
+    margin-top: 8px;
+  }
+
+  .book-page__info {
+    display: flex;
+  
+    img {
+      max-width: 165px;
+      max-height: 214px;
+      width: 100%;
+      height: 100%;
+      margin-right: 20px;
+    }
+  
+    &-content {
+      display: flex;
+      flex-direction: column;
+  
+      &-item {
+        margin-bottom: 8px;
+  
+        &-value {
+          font-weight: 600;
+        }
+      }
+  
+      &-fav-btn {
+        width: 160px;
+        height: 40px;
+        background-color: $main;
+        color: $white;
+        border-radius: 8px;
+        border: 2px solid transparent;
+        cursor: pointer;
+  
+        &:hover {
+          background-color: $white;
+          color: $main;
+          border-color: $main;
+        }
+      }
+    }
+  }
+
+  .book-page__description {
+    display: flex;
+    flex-direction: column;
+  
+    &-header {
+      line-height: 32px;
+      margin: 0;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+  }
+
+  .book-page__tag {
+    box-sizing: border-box;
+    padding: 6px;
+    border-radius: 8px;
+    border: 2px solid $main;
+    cursor: pointer;
+  
+    &s {
+      &-inner {
+        display: flex;
+        gap: 12px;
+      }
+    
+      &-header {
+        line-height: 32px;
+        margin: 0;
+        margin-top: 20px;
+        margin-bottom: 8px;
+      }
+    }
+  
+    &:hover {
+      background-color: $main;
+      color: $white;
+    }
+  }
+</style>
