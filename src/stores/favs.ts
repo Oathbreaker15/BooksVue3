@@ -21,10 +21,10 @@ export const favsStore = defineStore('favsStore', {
       this.handleCurrentPage();
     },
     isBookInFavs(card: Card) {
-      return this.list.find(book => book.key === card.key);
+      return this.list.find((book: Card) => book.key === card.key);
     },
     getFavBookIndex(card: Card) {
-      return this.list.findIndex((book: Card)=> book.key === card.key);
+      return this.list.findIndex((book: Card) => book.key === card.key);
     },
     updateTotalPagesAmount() {
       this.paginationState.totalPages = Math.floor((this.list.length-1) / this.itemsPerPage); 
@@ -41,6 +41,7 @@ export const favsStore = defineStore('favsStore', {
   },
   getters: {
     formattedList: (state) => state.list.slice(state.paginationState.currentPage * state.itemsPerPage, (state.paginationState.currentPage+1) * state.itemsPerPage),
-    isListNotEmpty: (state) => !!state.list.length
+    isListNotEmpty: (state) => !!state.list.length,
+    favsAmount: (state) => state.list.length
   }
 })

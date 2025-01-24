@@ -1,12 +1,16 @@
 <script setup lang="ts">
   import { RouterLink, useRoute } from 'vue-router';
-  import { toRefs, computed } from 'vue';
-  import { favsStore } from '@/stores/favs';
+  import { computed } from 'vue';
 
-  const {list} = toRefs(favsStore());
+  const props = defineProps({
+    favsAmount: {
+      required: true,
+      type: Number
+    }
+  })
 
-  const route=useRoute();
-  const path = computed(() =>route.path)
+  const route = useRoute();
+  const path = computed(() => route.path)
 </script>
 
 <template>
@@ -26,15 +30,15 @@
       <section :class="`favorites-btn${path === '/favorites' ? '_active' : ''}`">
         <div class="favorites-btn__icon"></div>
         <span class="favorites-btn__title">Избранное</span>
-        <div class="favorites-btn__count">{{ list.length ?? 0 }}</div>
+        <div class="favorites-btn__count">{{ props.favsAmount }}</div>
       </section>
     </RouterLink>
   </header>
 </template>
 
 <style scoped lang="scss">
-@import '../styles/mixins.scss';
-@import '../styles/vars.scss';
+@import '@/styles/mixins.scss';
+@import '@/styles/vars.scss';
 
 .header {
   @include flexCenteredBetween();

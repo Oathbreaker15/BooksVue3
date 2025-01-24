@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import {defineProps, toRefs} from 'vue';
-  import type {PropType} from 'vue';
+  import { toRefs } from 'vue';
+  import type { PropType } from 'vue';
   import CardItem from './CardItem.vue';
   import type { Card } from '@/types/card/card';
 
@@ -11,7 +11,7 @@
     },
   }); 
 
-  const {list} = toRefs(props);
+  const { list } = toRefs(props);
 </script>
 
 <template>
@@ -21,8 +21,8 @@
 </template>
 
 <style scoped lang="scss">
-  @import '../styles/mixins.scss';
-  @import '../styles/vars.scss';
+  @import '@/styles/mixins.scss';
+  @import '@/styles/vars.scss';
 
   .books-tile__wrapper {
     display: grid;
@@ -30,7 +30,6 @@
     column-gap: 24px;
     row-gap: 20px;
     width: 100%;
-    // max-width: 1222px;
     margin: 0 auto;
     grid-template-columns: repeat(auto-fill,minmax(288px,1fr));
   }

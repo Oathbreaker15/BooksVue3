@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import { computed } from 'vue';
+
   const props = defineProps({
     header: {
       required: true,
@@ -14,17 +16,21 @@
     },
   }); 
 
-  function getImageUrl() {
-    // as unknown as string?? crazy shit
-    return new URL(`../assets/icons/${props.imgName}`, import.meta.url) as unknown as string;
-  }
+  // eslint-disable-next-line vue/return-in-computed-property
+  const imgClass = computed(() => {
+    if (props.imgName === 'nothing-found.svg') {
+      return 'nothing-found';
+    } else if (props.imgName === 'books.svg') {
+      return 'books';
+    }
+  });
 </script>
 
 <template>
   <section class="info_block__wrapper">
     <h1 class="info_block__header">{{header}}</h1>
 
-    <img v-if="imgName?.length" :src="getImageUrl()" class="info_block__img" />
+    <section v-if="imgName?.length" :class="`info_block__img _${imgClass}`" />
     <div class="info_block__info">
       {{ textContent }}
     </div>
@@ -48,7 +54,16 @@
     &__img {
       width: 184px;
       height: 184px;
-      object-fit: cover;
+
+      &._nothing-found {
+        background: url(@/assets/icons/nothing-found.svg) no-repeat 0 0;
+        background-size: cover;
+      }
+
+      &._books {
+        background: url(@/assets/icons/books.svg) no-repeat 0 0;
+        background-size: cover;
+      }
     }
 
     &__info {

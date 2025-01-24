@@ -19,7 +19,7 @@
     &__icon {
       width: 100px;
       height: 120px;
-      background: url(../assets/icons/book-gif.gif) no-repeat 0 0;
+      background: url(@/assets/icons/book-gif.gif) no-repeat 0 0;
       background-size: contain;
     }
   

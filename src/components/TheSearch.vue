@@ -22,7 +22,7 @@ function updateSearchQuery(query: string) {
 </template>
 
 <style scoped lang="scss">
-@import '../styles/vars.scss';
+@import '@/styles/vars.scss';
 
   .search-book {
     padding: 0 30px;
@@ -54,7 +54,7 @@ function updateSearchQuery(query: string) {
       display: block;
       position: absolute;
       left: 12px;
-      background: url(../src/assets/icons/search.svg) no-repeat 0 0;
+      background: url(@/assets/icons/search.svg) no-repeat 0 0;
     }
   
     &__submit-btn {
@@ -74,7 +74,7 @@ function updateSearchQuery(query: string) {
       content: '';
       width: 24px;
       height: 24px;
-      background: url(../src/assets/icons/search-white.svg) no-repeat 0 0;
+      background: url(@/assets/icons/search-white.svg) no-repeat 0 0;
       background-size: cover;
     }
   }

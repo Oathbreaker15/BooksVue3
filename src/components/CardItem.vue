@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { defineProps, computed } from 'vue';
+  import { computed } from 'vue';
   import type { PropType } from 'vue';
   import { favsStore } from '@/stores/favs';
   import type { Card } from '@/types/card/card';
@@ -11,11 +11,11 @@
       type: Object as PropType<Card>,
     },
   }); 
-  const {card} = props;
+  const { card } = props;
   const store = favsStore();
-  const imgLink = computed(()=>{
-    return card.cover_edition_key 
-                ? `https://covers.openlibrary.org/b/olid/${card.cover_edition_key}-M.jpg` 
+  const imgLink = computed(() => {
+    return card.coverEditionKey 
+                ? `https://covers.openlibrary.org/b/olid/${card.coverEditionKey}-M.jpg` 
                 : bookImg;
   });
 
@@ -32,7 +32,7 @@
       <section class="books-item__content-info">
         <p class="books-item__content-info-genre">{{ card.subject?.[0] ?? 'Жанр не указан' }}</p>
         <p class="books-item__content-info-title">{{ card.title }}</p>
-        <p class="books-item__content-info-author">{{ card.author_name?.[0] ?? 'Автор не указан' }}</p>
+        <p class="books-item__content-info-author">{{ card.authorName?.[0] ?? 'Автор не указан' }}</p>
       </section>
 
       <div @click="store.isBookInFavs(card) ? store.removeFromFavs(favBooksIndex) : store.addToFavs(card);" 
@@ -43,7 +43,7 @@
 </template>
 
 <style scoped lang="scss">
-  @import '../styles/vars.scss';
+  @import '@/styles/vars.scss';
 
   .books-item {
     display: flex;
@@ -126,7 +126,7 @@
           background-color: $white;
   
           &::before {
-            background: url(../src/assets/icons/favorite-white.svg);
+            background: url(@/assets/icons/favorite-white.svg);
           }
         } 
 
@@ -138,14 +138,14 @@
           content: '';
           width: 20px;
           height: 20px;
-          background: url(../src/assets/icons/favorite-black.svg) no-repeat 0 0;
+          background: url(@/assets/icons/favorite-black.svg) no-repeat 0 0;
         }
   
         &_active {
           background-color: $white;
   
           &::before {
-            background: url(../src/assets/icons/favorite-white.svg);
+            background: url(@/assets/icons/favorite-white.svg);
           }
         }
       }

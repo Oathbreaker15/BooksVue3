@@ -1,19 +1,22 @@
 <script setup lang="ts">
   import { RouterView } from 'vue-router';
   import TheHeader from '@/components/TheHeader.vue';
+  import { favsStore } from '@/stores/favs';
+
+  const favStore = favsStore(); 
 </script>
 
 <template>
   <main class="content">
-    <TheHeader/>
+    <TheHeader :favs-amount="favStore.favsAmount"/>
     <RouterView/>
   </main>
 </template>
 
 <style lang="scss">
   @import 'https://fonts.googleapis.com/css?family=Open+Sans';
-  @import 'styles/vars.scss';
-  @import 'styles/mixins.scss';
+  @import '@/styles/vars.scss';
+  @import '@/styles/mixins.scss';
 
   div#app {
     height: 100vh;

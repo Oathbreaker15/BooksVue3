@@ -1,16 +1,12 @@
 <script setup lang="ts">
   import {ref} from 'vue';
+  import mobileBackground from '@/assets/back.jpg';
 
   let isMobile = ref(window.innerWidth < 640);
 
   window.addEventListener('resize', ()=>{
     isMobile.value = window.innerWidth < 640;
   });
-
-  function mobileBackground() {
-    // as unknown as string?? crazy shit
-    return new URL(`../assets/back.jpg`, import.meta.url) as unknown as string;
-  }
 </script>
 
 <template>
@@ -20,12 +16,11 @@
       <p class="home-info-text">Добавляйте книги в избранное</p>
     </section>
 
-    <img v-if="isMobile" class="home-mobile-img" 
-      :src="mobileBackground()">
+    <img v-if="isMobile" class="home-mobile-img" :src="mobileBackground">
 
     <video v-else class="home-video-content" autoplay loop muted 
-        poster="../assets/video/mixkit-sheets-of-a-book-leafed-through-close-up-21588.mp4">
-      <source src="../assets/video/mixkit-sheets-of-a-book-leafed-through-close-up-21588.mp4" type="video/mp4">
+        poster="@/assets/video/mixkit-sheets-of-a-book-leafed-through-close-up-21588.mp4">
+      <source src="@/assets/video/mixkit-sheets-of-a-book-leafed-through-close-up-21588.mp4" type="video/mp4">
     </video>
   </section>
 </template>

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import type { Card } from '@/types/card/card';
+import { camalizeCardKeys } from '@/types/card/card';
 
 export const searchStore = defineStore('searchStore', {
   state: () => ({ 
@@ -26,7 +27,7 @@ export const searchStore = defineStore('searchStore', {
           this.list = [];
           const data = await this.loadList(this.searchQuery);                
           this.numFound = data.numFound;
-          this.list = data.docs;   
+          this.list = data.docs.map((el: Card) => camalizeCardKeys<object>(el));
           this.offset = this.list.length;             
           this.paginationState.totalPages = Math.floor(this.list.length / this.itemsPerPage);                
           this.loading = false;

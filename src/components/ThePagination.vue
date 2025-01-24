@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import {defineProps, toRefs} from 'vue';
-  import type {PropType} from 'vue';
+  import { toRefs } from 'vue';
+  import type { PropType } from 'vue';
   import type { Card } from '@/types/card/card';
   import type { PaginationState } from '@/types/pagination/paginationState';
 
@@ -15,7 +15,7 @@
     }
   }); 
 
-  const {list, paginationState} = toRefs(props);
+  const { list, paginationState } = toRefs(props);
 
   function goToNextPage() {
         paginationState.value.currentPage++;            
@@ -71,7 +71,7 @@
         &--next {
           width: 20px;
           height: 20px;
-          background: url(../src/assets/icons/pagination_arrow.svg) no-repeat 0 0;
+          background: url(@/assets/icons/pagination_arrow.svg) no-repeat 0 0;
         }
   
         &--next {

@@ -3,20 +3,14 @@ import { toRefs } from 'vue';
 import CardList from '@/components/CardList.vue';
 import ThePagination from '@/components/ThePagination.vue';
 import InfoBlock from '@/components/InfoBlock.vue';
+import { initResizeHandler } from '@/composition/handleResize';
 
 import { favsStore } from '@/stores/favs';
 
 const store = favsStore();
 const {list, formattedList, paginationState, isListNotEmpty} = toRefs(store);
 
-function handleItemsPerPage() {
-  window.innerWidth < 1316 ? store.handleItemsPerPage(6) : store.handleItemsPerPage(8);
-}
-
-handleItemsPerPage();
-window.addEventListener('resize', ()=>{
-  handleItemsPerPage();
-})
+initResizeHandler(store);
 </script>
 
 <template>
