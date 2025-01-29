@@ -1,47 +1,60 @@
+import { computed, toRef } from 'vue';
 import { defineStore } from 'pinia';
 import type { Card } from '@/types/card/card';
+import { usePagination } from '@/composition/usePagination';
 
-export const favsStore = defineStore('favsStore', {
-  state: () => ({ 
-    list: [] as Card[],
-    itemsPerPage: 6,
-    paginationState: {
-      currentPage: 0,
-      totalPages: 0
-    }
-  }),
-  actions: {
-    addToFavs(item: Card) {
-      this.list.push(item);
-      this.updateTotalPagesAmount();
-    },
-    removeFromFavs(favBookIndex: number) {
-      this.list.splice(favBookIndex, 1);
-      this.updateTotalPagesAmount();
-      this.handleCurrentPage();
-    },
-    isBookInFavs(card: Card) {
-      return this.list.find((book: Card) => book.key === card.key);
-    },
-    getFavBookIndex(card: Card) {
-      return this.list.findIndex((book: Card) => book.key === card.key);
-    },
-    updateTotalPagesAmount() {
-      this.paginationState.totalPages = Math.floor((this.list.length-1) / this.itemsPerPage); 
-    },
-    handleCurrentPage() {
-      if (this.list.length && this.list.length % this.itemsPerPage === 0) {
-        this.paginationState.currentPage--;
-      }
-    },
-    handleItemsPerPage(newVal: number) {
-      this.itemsPerPage = newVal;
-      this.updateTotalPagesAmount();
+export const favsStore = defineStore('favsStore', () => {
+  const pagination = usePagination<Card>();
+
+  const addToFavs = (item: Card) => {
+    pagination.list.push(item);
+    pagination.updateTotalPagesAmount();
   }
-  },
-  getters: {
-    formattedList: (state) => state.list.slice(state.paginationState.currentPage * state.itemsPerPage, (state.paginationState.currentPage+1) * state.itemsPerPage),
-    isListNotEmpty: (state) => !!state.list.length,
-    favsAmount: (state) => state.list.length
+
+  const removeFromFavs = (favBookIndex: number) => {
+    pagination.list.splice(favBookIndex, 1);
+    pagination.updateTotalPagesAmount();
+    pagination.handleCurrentPage();
+  }
+
+  const isBookInFavs = (card: Card) => {
+    return pagination.list.some((book: Card) => book.key === card.key);
+  }
+
+  const getFavBookIndex = (card: Card) => {
+    return pagination.list.findIndex((book: Card) => book.key === card.key);
+  }
+
+  const updateTotalPagesAmount = pagination.updateTotalPagesAmount;
+
+  const handleCurrentPage = pagination.handleCurrentPage;
+
+  const handleItemsPerPage = pagination.handleItemsPerPage;
+
+  const formattedList = pagination.formattedList;
+  const isListNotEmpty = pagination.isListNotEmpty;
+  const favsAmount = computed(() => pagination.list.length);
+
+  return {
+    // state
+    list: toRef(pagination, 'list'),
+    itemsPerPage: toRef(pagination, 'itemsPerPage'),
+    paginationState: toRef(pagination, 'paginationState'),
+
+    // methods
+    addToFavs,
+    removeFromFavs,
+    isBookInFavs,
+    getFavBookIndex,
+    updateTotalPagesAmount,
+    handleCurrentPage,
+    handleItemsPerPage,
+    toPrevPage: pagination.toPrevPage,
+    toNextPage: pagination.toNextPage,
+
+    // computed
+    formattedList,
+    isListNotEmpty,
+    favsAmount
   }
 })

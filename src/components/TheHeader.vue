@@ -1,16 +1,15 @@
 <script setup lang="ts">
-  import { RouterLink, useRoute } from 'vue-router';
-  import { computed } from 'vue';
+import { RouterLink, useRoute } from 'vue-router';
+import { computed } from 'vue';
 
-  const props = defineProps({
-    favsAmount: {
-      required: true,
-      type: Number
-    }
-  })
+interface Props {
+  favsAmount: number
+}
 
-  const route = useRoute();
-  const path = computed(() => route.path)
+const props = defineProps<Props>()
+
+const route = useRoute();
+const path = computed(() => route.path)
 </script>
 
 <template>
@@ -20,14 +19,14 @@
     </RouterLink>
 
     <RouterLink to="/search" class="search-book-btn-wrapper">
-      <section :class="`search-book-btn${path === '/search' ? '_active' : ''}`">
+      <section :class="['search-book-btn', { '_active': path === '/search' }]">
         <div class="search-book-btn__icon"></div>
         <span class="search-book-btn__title">Поиск книг</span>
       </section>
     </RouterLink>
 
     <RouterLink to="/favorites" class="favorites-btn-wrapper">
-      <section :class="`favorites-btn${path === '/favorites' ? '_active' : ''}`">
+      <section :class="['favorites-btn', { '_active': path === '/favorites' }]">
         <div class="favorites-btn__icon"></div>
         <span class="favorites-btn__title">Избранное</span>
         <div class="favorites-btn__count">{{ props.favsAmount }}</div>
@@ -62,7 +61,7 @@
 }
 
 .search-book-btn,
-.search-book-btn_active {
+.search-book-btn._active {
   @include flexCenteredBetween();
   margin-left: auto;
 
@@ -74,7 +73,7 @@
 
   &__icon {
     @include iconsCommonSize();
-    background: url(../src/assets/icons/search.svg) no-repeat 0 0;
+    background: url(@/assets/icons/search.svg) no-repeat 0 0;
     background-size: cover;
   }
 
@@ -88,7 +87,7 @@
     }
   }
 
-  &_active {
+  &._active {
     font-weight: bold;
   }
 }
@@ -104,7 +103,7 @@
 
   &__icon {
     @include iconsCommonSize();
-    background: url(../src/assets/icons/favorites.svg) no-repeat 0 0;
+    background: url(@/assets/icons/favorites.svg) no-repeat 0 0;
     background-size: cover;
   }
 
@@ -130,7 +129,7 @@
     justify-content: center;
   }
 
-  &_active {
+  &._active {
     font-weight: bold;
   }
 }
@@ -150,7 +149,8 @@
 
   .search-book-btn {
     border: 2px solid transparent;
-    &_active {
+
+    &._active {
       @include activeMobIcon();
     }
 
@@ -163,7 +163,7 @@
     border: 2px solid transparent;
     margin-left: 8px;
 
-    &_active {
+    &._active {
       margin-left: 16px;
       @include activeMobIcon();
     }
@@ -177,5 +177,4 @@
     }
   }
 }
-
 </style>

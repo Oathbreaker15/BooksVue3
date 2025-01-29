@@ -1,4 +1,6 @@
-import type {IHandleItemsPerPage} from '../interfaces/IHandleItemsPerPage';
+interface IHandleItemsPerPage {
+  handleItemsPerPage(amountPerPage: number): void
+}
 
 // Константы для лучшей читаемости и поддерживаемости
 const BREAKPOINT_WIDTH = 1316;

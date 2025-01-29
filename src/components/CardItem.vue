@@ -1,80 +1,89 @@
 <script setup lang="ts">
-  import { computed } from 'vue';
-  import type { PropType } from 'vue';
-  import { favsStore } from '@/stores/favs';
-  import type { Card } from '@/types/card/card';
-  import bookImg from '@/assets/icons/black-book.svg';
+import { computed } from 'vue';
+import { favsStore } from '@/stores/favs';
+import type { Card } from '@/types/card/card';
+import bookImg from '@/assets/icons/black-book.svg';
 
-  const props = defineProps({
-    card: {
-      required: true,
-      type: Object as PropType<Card>,
-    },
-  }); 
-  const { card } = props;
-  const store = favsStore();
-  const imgLink = computed(() => {
-    return card.coverEditionKey 
-                ? `https://covers.openlibrary.org/b/olid/${card.coverEditionKey}-M.jpg` 
-                : bookImg;
-  });
+interface Props {
+  card: Card
+}
 
-  const favBooksIndex = computed(() => store.getFavBookIndex(card));
+const props = defineProps<Props>();
+const { card } = props;
+const store = favsStore();
+const imgLink = computed(() => {
+  return card.coverEditionKey
+    ? `https://covers.openlibrary.org/b/olid/${card.coverEditionKey}-M.jpg`
+    : bookImg;
+});
+
+const favBooksIndex = computed(() => store.getFavBookIndex(card));
+
+const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement;
+  img.src = bookImg;
+};
+
+const toggleFavorite = () => {
+  store.isBookInFavs(card)
+    ? store.removeFromFavs(favBooksIndex.value)
+    : store.addToFavs(card);
+};
 </script>
 
 <template>
-  <section class="books-item">
+  <article class="books-item">
     <div class="books-item__img">
-      <img :src="imgLink" :alt="card.title">
+      <img :src="imgLink" :alt="card.title" loading="lazy" @error="handleImageError">
     </div>
 
     <section class="books-item__content">
       <section class="books-item__content-info">
         <p class="books-item__content-info-genre">{{ card.subject?.[0] ?? 'Жанр не указан' }}</p>
-        <p class="books-item__content-info-title">{{ card.title }}</p>
+        <h2 class="books-item__content-info-title">{{ card.title }}</h2>
         <p class="books-item__content-info-author">{{ card.authorName?.[0] ?? 'Автор не указан' }}</p>
       </section>
 
-      <div @click="store.isBookInFavs(card) ? store.removeFromFavs(favBooksIndex) : store.addToFavs(card);" 
-      :class="`books-item__content-fav-btn${store.isBookInFavs(card) ? '_active' : ''}`">
-      </div>
+      <button @click="toggleFavorite" :class="`books-item__content-fav-btn${store.isBookInFavs(card) ? '_active' : ''}`"
+        :aria-label="store.isBookInFavs(card) ? 'Удалить из избранного' : 'Добавить в избранное'">
+      </button>
     </section>
-  </section>
+  </article>
 </template>
 
 <style scoped lang="scss">
-  @import '@/styles/vars.scss';
+@import '@/styles/vars.scss';
 
-  .books-item {
-    display: flex;
-    flex-direction: column;
-    border-radius: 8px;
-    overflow: hidden;
-    position: relative;
+.books-item {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
 
-    &:hover {
-      box-shadow: 0 16px 24px 0 rgba(0,13,51,.2);
+  &:hover {
+    box-shadow: 0 16px 24px 0 rgba(0, 13, 51, .2);
 
-      .books-item__content {
-        bottom: 0;
-      }
-    } 
-  
-    &__img {
-      padding: 12px;
-      box-sizing: border-box;
-      background: $book-item-background;
-  
-      img {
-        width: 100%;
-        height: 100%;
-        max-height: 384px;
-        min-height: 384px;
-      }
+    .books-item__content {
+      bottom: 0;
     }
-  
-    @media screen and (min-width: 1095px) {
-      &__content {
+  }
+
+  &__img {
+    padding: 12px;
+    box-sizing: border-box;
+    background: $book-item-background;
+
+    img {
+      width: 100%;
+      height: 100%;
+      max-height: 384px;
+      min-height: 384px;
+    }
+  }
+
+  @media screen and (min-width: 1095px) {
+    &__content {
       padding: 12px 10px;
       background: $main;
       color: $white;
@@ -83,124 +92,150 @@
       width: 100%;
       box-sizing: border-box;
       transition: bottom 0.2s ease-out;
-      }
     }
+  }
 
-    @media screen and (max-width: 1095px) {
-      &__content {
-        padding: 12px 10px;
-        background: $main;
-        color: $white;
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        box-sizing: border-box;
-      }
-    }
-
+  @media screen and (max-width: 1095px) {
     &__content {
-      &-info-genre,
-      &-info-title,
-      &-info-title {
-        margin: 0;
-      }
-  
-      &-info-title {
-        font-weight: 600;
-      }
-  
-      &-fav-btn,
-      &-fav-btn_active {
-        width: 36px;
-        height: 32px;
-        background: $main;
-        border: 2px solid $white;
-        border-radius: 6px;
-        margin-top: 38px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-  
-        &:hover{
-          background-color: $white;
-  
-          &::before {
-            background: url(@/assets/icons/favorite-white.svg);
-          }
-        } 
-
-        &:active{
-          background: #bbb;
-        } 
-  
-        &::before {
-          content: '';
-          width: 20px;
-          height: 20px;
-          background: url(@/assets/icons/favorite-black.svg) no-repeat 0 0;
-        }
-  
-        &_active {
-          background-color: $white;
-  
-          &::before {
-            background: url(@/assets/icons/favorite-white.svg);
-          }
-        }
-      }
-    }
-  }
-
-  .books-item__content-info-author {
-    margin-top: 8px;
-  }
-
-  .book-page__info {
-    display: flex;
-  
-    img {
-      max-width: 165px;
-      max-height: 214px;
+      padding: 12px 10px;
+      background: $main;
+      color: $white;
+      position: absolute;
+      bottom: 0;
       width: 100%;
-      height: 100%;
-      margin-right: 20px;
+      box-sizing: border-box;
     }
-  
-    &-content {
+  }
+
+  &__content {
+
+    &-info-genre,
+    &-info-title,
+    &-info-title {
+      margin: 0;
+    }
+
+    &-info-genre {
+      margin-bottom: 4px;
+    }
+
+    &-info-title {
+      font-weight: 600;
+    }
+
+    &-fav-btn,
+    &-fav-btn_active {
+      width: 36px;
+      height: 32px;
+      background: $main;
+      border: 2px solid $white;
+      border-radius: 6px;
+      margin-top: 38px;
       display: flex;
-      flex-direction: column;
-  
-      &-item {
-        margin-bottom: 8px;
-  
-        &-value {
-          font-weight: 600;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $white;
+
+        &::before {
+          background: url(@/assets/icons/favorite-white.svg);
         }
       }
-  
-      &-fav-btn {
-        width: 160px;
-        height: 40px;
-        background-color: $main;
-        color: $white;
-        border-radius: 8px;
-        border: 2px solid transparent;
-        cursor: pointer;
-  
-        &:hover {
-          background-color: $white;
-          color: $main;
-          border-color: $main;
+
+      &:active {
+        background: #bbb;
+      }
+
+      &::before {
+        content: '';
+        width: 20px;
+        height: 20px;
+        background: url(@/assets/icons/favorite-black.svg) no-repeat 0 0;
+      }
+
+      &_active {
+        background-color: $white;
+
+        &::before {
+          background: url(@/assets/icons/favorite-white.svg);
         }
       }
     }
   }
+}
 
-  .book-page__description {
+.books-item__content-info-author {
+  margin-top: 8px;
+}
+
+.book-page__info {
+  display: flex;
+
+  img {
+    max-width: 165px;
+    max-height: 214px;
+    width: 100%;
+    height: 100%;
+    margin-right: 20px;
+  }
+
+  &-content {
     display: flex;
     flex-direction: column;
-  
+
+    &-item {
+      margin-bottom: 8px;
+
+      &-value {
+        font-weight: 600;
+      }
+    }
+
+    &-fav-btn {
+      width: 160px;
+      height: 40px;
+      background-color: $main;
+      color: $white;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $white;
+        color: $main;
+        border-color: $main;
+      }
+    }
+  }
+}
+
+.book-page__description {
+  display: flex;
+  flex-direction: column;
+
+  &-header {
+    line-height: 32px;
+    margin: 0;
+    margin-top: 20px;
+    margin-bottom: 8px;
+  }
+}
+
+.book-page__tag {
+  box-sizing: border-box;
+  padding: 6px;
+  border-radius: 8px;
+  border: 2px solid $main;
+  cursor: pointer;
+
+  &s {
+    &-inner {
+      display: flex;
+      gap: 12px;
+    }
+
     &-header {
       line-height: 32px;
       margin: 0;
@@ -209,30 +244,9 @@
     }
   }
 
-  .book-page__tag {
-    box-sizing: border-box;
-    padding: 6px;
-    border-radius: 8px;
-    border: 2px solid $main;
-    cursor: pointer;
-  
-    &s {
-      &-inner {
-        display: flex;
-        gap: 12px;
-      }
-    
-      &-header {
-        line-height: 32px;
-        margin: 0;
-        margin-top: 20px;
-        margin-bottom: 8px;
-      }
-    }
-  
-    &:hover {
-      background-color: $main;
-      color: $white;
-    }
+  &:hover {
+    background-color: $main;
+    color: $white;
   }
+}
 </style>

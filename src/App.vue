@@ -1,58 +1,38 @@
 <script setup lang="ts">
-  import { RouterView } from 'vue-router';
-  import TheHeader from '@/components/TheHeader.vue';
-  import { favsStore } from '@/stores/favs';
+import { computed } from 'vue';
+import { RouterView } from 'vue-router';
+import TheHeader from '@/components/TheHeader.vue';
+import { favsStore } from '@/stores/favs';
 
-  const favStore = favsStore(); 
+const favStore = favsStore();
+const favsAmount = computed(() => favStore.favsAmount);
 </script>
 
 <template>
   <main class="content">
-    <TheHeader :favs-amount="favStore.favsAmount"/>
-    <RouterView/>
+    <TheHeader :favs-amount="favsAmount" />
+    <RouterView />
   </main>
 </template>
 
 <style lang="scss">
-  @import 'https://fonts.googleapis.com/css?family=Open+Sans';
-  @import '@/styles/vars.scss';
-  @import '@/styles/mixins.scss';
+@import '@/styles/global.scss';
 
-  div#app {
-    height: 100vh;
-  }
+.content {
+  box-sizing: border-box;
+  max-width: 1344px;
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+}
 
-  body {
-    color: $main;
-    font-size: 14px;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    position: relative;
-    line-height: 20px;
-    font-family: 'Open Sans', sans-serif;
-  }
-
+@media (max-width: 639px) {
   h1 {
-    font-size: 32px;
-    line-height: 40px;
+    font-size: 23px;
+    line-height: 32px;
   }
-
-  .content {
-    box-sizing: border-box;
-    max-width: 1344px;
-    margin: 0 auto;
-    width: 100%;
-    height: 100%;
-    padding: 0 16px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  @media (max-width: 639px) {
-    h1 {
-      font-size: 23px;
-      line-height: 32px;
-    }
-  }
+}
 </style>

@@ -1,55 +1,76 @@
+import { reactive, computed, toRefs, toRef } from 'vue';
 import { defineStore } from 'pinia';
 import type { Card } from '@/types/card/card';
-import { camalizeCardKeys } from '@/types/card/card';
+import { camalizeCardKeys } from '@/composition/camalizeCardKeys';
+import { usePagination } from '@/composition/usePagination';
 
-export const searchStore = defineStore('searchStore', {
-  state: () => ({ 
-    list: [] as Card[],
+const API_URL = 'https://openlibrary.org/search.json';
+
+export const searchStore = defineStore('searchStore',() => {
+  const pagination = usePagination<Card>();
+
+  const state = reactive({
     loading: false,
     numFound: 0,
     searchQuery: '',
     offset: 0,
-    itemsPerPage: 6,
-    isBeenSearched: false,
-    paginationState: {
-      currentPage: 0,
-      totalPages: 0
+    hasBeenSearched: false,
+  });
+
+  
+  const loadList = async(query: string) => {
+    const res = await fetch(`${API_URL}?q=${query}`);
+    return res.json();
+  }
+
+  const fetchBooks = async() => {
+    try {
+      state.loading = true;
+      pagination.resetState();
+      const data = await loadList(state.searchQuery);      
+      const mappedDocs = data.docs.map((el: Card) => camalizeCardKeys<object>(el));
+      pagination.list.splice(0, pagination.list.length, ...mappedDocs);
+      pagination.updateTotalPagesAmount();
+      state.numFound = data.numFound;          
+    } catch (e) {
+      console.error('Error updating model:', e); 
+    } finally {
+      state.loading = false;
+      state.hasBeenSearched = !!state.searchQuery.length;
     }
-  }),
-  actions: {
-    async loadList(query: string) {
-      const res = await fetch(`https://openlibrary.org/search.json?q=${query}`);
-      return res.json();
-    },
-    async updateModel() {
-      try {
-          this.loading = true;
-          this.list = [];
-          const data = await this.loadList(this.searchQuery);                
-          this.numFound = data.numFound;
-          this.list = data.docs.map((el: Card) => camalizeCardKeys<object>(el));
-          this.offset = this.list.length;             
-          this.paginationState.totalPages = Math.floor(this.list.length / this.itemsPerPage);                
-          this.loading = false;
-          this.isBeenSearched = !!this.searchQuery.length;
-      } catch (e) {
-          console.log(e);    
-      }
-    },
-    updateTotalPagesAmount() {
-      this.paginationState.totalPages = Math.floor((this.list.length-1) / this.itemsPerPage); 
-    },
-    handleItemsPerPage(newVal: number) {
-      this.itemsPerPage = newVal;
-      this.updateTotalPagesAmount();
-    },
-    resetSearchedState() {
-      this.isBeenSearched = false;
-    }
-  },
-  getters: {
-    formattedList: (state) => state.list.slice(state.paginationState.currentPage * state.itemsPerPage, (state.paginationState.currentPage+1) * state.itemsPerPage),
-    isListNotEmpty: (state) => !!state.list.length,
-    isSearchEmpty: (state) => !state.list.length && state.searchQuery.length && state.isBeenSearched
+  }
+
+  const updateSearchQuery = (query: string) => {
+    state.searchQuery = query;
+  }
+
+  const resetSearchedState = () => {
+    state.hasBeenSearched = false;
+  }
+
+  const isSearchEmpty = computed(() => !pagination.list.length && state.searchQuery.length && state.hasBeenSearched);
+
+  return {
+    //state
+    ...toRefs(state),
+    list: toRef(pagination, 'list'),
+    itemsPerPage: toRef(pagination, 'itemsPerPage'),
+    paginationState: toRef(pagination, 'paginationState'),
+
+    //methods
+    loadList,
+    fetchBooks,
+    updateSearchQuery,
+    resetSearchedState,
+    updateTotalPagesAmount: pagination.updateTotalPagesAmount,
+    handleCurrentPage: pagination.handleCurrentPage,
+    handleItemsPerPage: pagination.handleItemsPerPage,
+    toPrevPage: pagination.toPrevPage,
+    toNextPage: pagination.toNextPage,
+
+    //computed
+    formattedList: pagination.formattedList,
+    isListNotEmpty: pagination.isListNotEmpty,
+    isSearchEmpty,
   }
 })

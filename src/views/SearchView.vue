@@ -10,19 +10,28 @@ import { searchStore } from '@/stores/search';
 import { initResizeHandler } from '@/composition/handleResize';
 
 const store = searchStore();
-const { list, searchQuery, formattedList, paginationState, loading, numFound, isListNotEmpty } = storeToRefs(store);
-
+const {
+  list,
+  searchQuery,
+  formattedList,
+  paginationState,
+  loading,
+  numFound,
+  isListNotEmpty,
+  isSearchEmpty
+} = storeToRefs(store);
+const { toPrevPage, toNextPage, updateSearchQuery, fetchBooks } = store;
 initResizeHandler(store);
 
-watch(() => searchQuery.value, (searchQuery) => {
-  if (!searchQuery.length) {
+watch(() => searchQuery.value, (newSearchQuery) => {
+  if (!newSearchQuery.length) {
     store.resetSearchedState();
   }
 })
 </script>
 
 <template>
-  <TheSearch />
+  <TheSearch @update-search-query="updateSearchQuery" @submit-search="fetchBooks" />
 
   <transition-group name="fade">
     <loadingAnimationWhileSearching v-if="loading" key="1" />
@@ -32,15 +41,16 @@ watch(() => searchQuery.value, (searchQuery) => {
 
       <CardList v-if="list.length" :list="formattedList" />
 
-      <InfoBlock v-else-if="store.isSearchEmpty" :header="'Ничего не найдено'"
-        :text-content="'Пожалуйста, проверьте искомое значение на опечатки.'" :img-name="'nothing-found.svg'" />
+      <InfoBlock v-else-if="isSearchEmpty" :header="'Ничего не найдено'"
+        :text-content="'Пожалуйста, проверьте искомое значение на опечатки.'" :img-class="'nothing-found'" />
 
       <InfoBlock v-else :header="'Воспользуйтесь строкой поиска'"
-        :text-content="'Здесь будут отображаться найденные книги.'" />
+        :text-content="'Здесь будут отображаться найденные книги.'" :img-class="'books'" />
     </section>
   </transition-group>
 
-  <ThePagination :list="list" :pagination-state="paginationState" />
+  <ThePagination v-if="isListNotEmpty" :list="list" :pagination-state="paginationState" @to-prev-page="toPrevPage"
+    @to-next-page="toNextPage" />
 </template>
 
 <style scoped lang="scss">

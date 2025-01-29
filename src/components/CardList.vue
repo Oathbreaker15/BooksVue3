@@ -1,15 +1,13 @@
 <script setup lang="ts">
   import { toRefs } from 'vue';
-  import type { PropType } from 'vue';
   import CardItem from './CardItem.vue';
   import type { Card } from '@/types/card/card';
 
-  const props = defineProps({
-    list: {
-      required: true,
-      type: Array as PropType<Card[]>,
-    },
-  }); 
+  interface Props {
+    list: Card[]
+  }
+
+  const props = defineProps<Props>();
 
   const { list } = toRefs(props);
 </script>

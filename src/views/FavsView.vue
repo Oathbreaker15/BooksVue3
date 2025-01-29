@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRefs } from 'vue';
+import { storeToRefs } from 'pinia';
 import CardList from '@/components/CardList.vue';
 import ThePagination from '@/components/ThePagination.vue';
 import InfoBlock from '@/components/InfoBlock.vue';
@@ -8,43 +8,49 @@ import { initResizeHandler } from '@/composition/handleResize';
 import { favsStore } from '@/stores/favs';
 
 const store = favsStore();
-const {list, formattedList, paginationState, isListNotEmpty} = toRefs(store);
+const { list, formattedList, paginationState, isListNotEmpty } = storeToRefs(store);
+const { toPrevPage, toNextPage } = store;
 
 initResizeHandler(store);
 </script>
 
 <template>
-  <section :class="['books-tile', {'_empty': !list.length}]" key="2">
-    <h2 v-if="isListNotEmpty" class="books-tile__header">Избранные книги</h2>
+  <section :class="['books-tile', { '_empty': !list.length }]" key="2">
+    <template v-if="isListNotEmpty">
+      <h2 class="books-tile__header">Избранные книги</h2>
+      <CardList :list="formattedList" />
+    </template>
 
-    <CardList v-if="list.length" :list="formattedList"/>
     <InfoBlock v-else 
-                :header="'Здесь пока ничего нет'" 
-                :text-content="'Добавляйте любимые книги из поиска, чтобы создать коллекцию.'" 
-                :img-name="'books.svg'" />
+              :header="'Здесь пока ничего нет'"
+              :text-content="'Добавляйте любимые книги из поиска, чтобы создать коллекцию.'" 
+              :img-class="'books'" />
 
-    <ThePagination :list="list" :pagination-state="paginationState" />
+    <ThePagination :list="list" 
+                    :pagination-state="paginationState" 
+                    @to-prev-page="toPrevPage"
+                    @to-next-page="toNextPage" />
   </section>
 </template>
 
 <style scoped lang="scss">
+.books-tile {
+  padding: 30px;
+  box-sizing: border-box;
+
+  &._empty {
+    flex-grow: 1;
+  }
+
+  &__header {
+    font-size: 24px;
+    line-height: 32px;
+  }
+}
+
+@media (max-width: 639px) {
   .books-tile {
-    padding: 30px;
-    box-sizing: border-box;
-
-    &._empty {
-      flex-grow: 1;
-    }
-
-    &__header {
-      font-size: 24px;
-      line-height: 32px;
-    }
+    padding: 0px;
   }
-
-  @media (max-width: 639px) {
-    .books-tile {
-      padding: 0px;
-    }
-  }
+}
 </style>
