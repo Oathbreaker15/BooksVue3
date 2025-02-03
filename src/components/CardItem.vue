@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { favsStore } from '@/stores/favs';
 import type { Card } from '@/types/card/card';
 import bookImg from '@/assets/icons/black-book.svg';
@@ -11,13 +11,16 @@ interface Props {
 const props = defineProps<Props>();
 const { card } = props;
 const store = favsStore();
+const { removeFromFavs, addToFavs, getFavBookIndex, isBookInFavs } = store;
+let isBookSelected = ref(isBookInFavs(card));
+
 const imgLink = computed(() => {
   return card.coverEditionKey
     ? `https://covers.openlibrary.org/b/olid/${card.coverEditionKey}-M.jpg`
     : bookImg;
 });
 
-const favBooksIndex = computed(() => store.getFavBookIndex(card));
+const favBooksIndex = computed(() => getFavBookIndex(card));
 
 const handleImageError = (event: Event) => {
   const img = event.target as HTMLImageElement;
@@ -25,9 +28,11 @@ const handleImageError = (event: Event) => {
 };
 
 const toggleFavorite = () => {
-  store.isBookInFavs(card)
-    ? store.removeFromFavs(favBooksIndex.value)
-    : store.addToFavs(card);
+  isBookSelected.value
+  ? removeFromFavs(favBooksIndex.value)
+  : addToFavs(card);
+
+  isBookSelected.value = isBookInFavs(card);
 };
 </script>
 
@@ -44,8 +49,9 @@ const toggleFavorite = () => {
         <p class="books-item__content-info-author">{{ card.authorName?.[0] ?? 'Автор не указан' }}</p>
       </section>
 
-      <button @click="toggleFavorite" :class="`books-item__content-fav-btn${store.isBookInFavs(card) ? '_active' : ''}`"
-        :aria-label="store.isBookInFavs(card) ? 'Удалить из избранного' : 'Добавить в избранное'">
+      <button @click.prevent.stop="toggleFavorite" 
+        :class="`books-item__content-fav-btn${isBookSelected ? '_active' : ''}`"
+        :aria-label="isBookSelected ? 'Удалить из избранного' : 'Добавить в избранное'">
       </button>
     </section>
   </article>
@@ -110,7 +116,6 @@ const toggleFavorite = () => {
   &__content {
 
     &-info-genre,
-    &-info-title,
     &-info-title {
       margin: 0;
     }
@@ -121,6 +126,12 @@ const toggleFavorite = () => {
 
     &-info-title {
       font-weight: 600;
+      height: 48px;
+      overflow: hidden;
+      line-height: 1.1em;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
     }
 
     &-fav-btn,

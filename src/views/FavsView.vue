@@ -18,19 +18,20 @@ initResizeHandler(store);
   <section :class="['books-tile', { '_empty': !list.length }]" key="2">
     <template v-if="isListNotEmpty">
       <h2 class="books-tile__header">Избранные книги</h2>
-      <CardList :list="formattedList" />
+      <CardList v-if="list.length" :list="formattedList" />
     </template>
 
     <InfoBlock v-else 
               :header="'Здесь пока ничего нет'"
               :text-content="'Добавляйте любимые книги из поиска, чтобы создать коллекцию.'" 
               :img-class="'books'" />
+  </section>
 
-    <ThePagination :list="list" 
+  <ThePagination v-if="isListNotEmpty" 
+                    :list="list" 
                     :pagination-state="paginationState" 
                     @to-prev-page="toPrevPage"
                     @to-next-page="toNextPage" />
-  </section>
 </template>
 
 <style scoped lang="scss">

@@ -12,7 +12,10 @@ const props = defineProps<Props>();
 
 const { list, paginationState } = toRefs(props);
 
-const emit = defineEmits(['to-next-page', 'to-prev-page']);
+const emit = defineEmits<{
+  'to-next-page': [],
+  'to-prev-page': []
+}>()
 
 const toNextPage = () => {
   emit('to-next-page');

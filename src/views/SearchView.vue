@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from 'vue';
+import { watch, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import TheSearch from '@/components/TheSearch.vue';
 import CardList from '@/components/CardList.vue';
@@ -18,16 +18,26 @@ const {
   loading,
   numFound,
   isListNotEmpty,
-  isSearchEmpty
+  isSearchEmpty,
+  isReachedUpdateThreshold
 } = storeToRefs(store);
-const { toPrevPage, toNextPage, updateSearchQuery, fetchBooks } = store;
+const { toPrevPage, toNextPage, updateSearchQuery, fetchBooks, resetSearchedState, fetchMoreBooks } = store;
 initResizeHandler(store);
+
+const isReachedUpdateThresholdComputed = computed(() => {
+  return isReachedUpdateThreshold.value;
+});
 
 watch(() => searchQuery.value, (newSearchQuery) => {
   if (!newSearchQuery.length) {
-    store.resetSearchedState();
+    resetSearchedState();
   }
 })
+
+watch(() => isReachedUpdateThreshold.value, () => {
+  if (isReachedUpdateThresholdComputed.value) fetchMoreBooks();
+});
+
 </script>
 
 <template>
@@ -49,8 +59,11 @@ watch(() => searchQuery.value, (newSearchQuery) => {
     </section>
   </transition-group>
 
-  <ThePagination v-if="isListNotEmpty" :list="list" :pagination-state="paginationState" @to-prev-page="toPrevPage"
-    @to-next-page="toNextPage" />
+  <ThePagination v-if="isListNotEmpty" 
+                :list="list" 
+                :pagination-state="paginationState" 
+                @to-prev-page="toPrevPage"
+                @to-next-page="toNextPage" />
 </template>
 
 <style scoped lang="scss">

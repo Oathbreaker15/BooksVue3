@@ -1,9 +1,10 @@
-import { ref, computed } from 'vue';
-import type { UnwrapRefSimple } from '@vue/reactivity';
+import { computed, ref } from 'vue';
+import type { UnwrapRef } from 'vue';
 
 interface IPaginationState {
   currentPage: number,
-  totalPages: number
+  totalPages: number,
+  updateThreshold: number
 }
 
 interface IPaginationOptions {
@@ -11,67 +12,68 @@ interface IPaginationOptions {
 }
 
 export function usePagination<T>(options: IPaginationOptions = {}) {
-  const state = ref({
-    list: [] as T[],
-    itemsPerPage: options.initialItemsOnPageCnt ?? 6,
-    paginationState: {
-      currentPage: 0,
-      totalPages: 0
-    } as IPaginationState
-  })
+  const list = ref<T[]>([]);
+  const itemsPerPage = ref(options.initialItemsOnPageCnt ?? 6);
+  const paginationState = ref({
+    currentPage: 0,
+    totalPages: 0,
+    updateThreshold: 5
+  } as IPaginationState);
+
+  const setInitialPaginationState = () => {
+    paginationState.value.currentPage = 0;
+    paginationState.value.totalPages = 0;
+  };
 
   const resetState = () => {
-    // state.value.list = []
-    state.value.list.length = 0;
-    state.value.paginationState.currentPage = 0;
-    state.value.paginationState.totalPages = 0;
+    // list.value.splice(0, list.value.length);
+    list.value.length = 0;
+    setInitialPaginationState();
   }
 
   const updateList = (newList: T[]) => {
-    console.log(newList);
-    console.log(state.value.list.length);
-    
-    
-    // state.value.list = [...newList] as UnwrapRefSimple<T>[];
-    state.value.list.splice(0, 0, [...newList]);
+    const spliceFromIndex = list.value.length;
+    list.value.splice(spliceFromIndex, list.value.length + newList.length, ...newList as UnwrapRef<T[]>);
   }
 
-
   const updateTotalPagesAmount = () => {
-    state.value.paginationState.totalPages = Math.floor((state.value.list.length-1) / state.value.itemsPerPage); 
+    paginationState.value.totalPages = Math.floor((list.value.length-1) / itemsPerPage.value); 
   }
 
   const handleCurrentPage = () => {
-    if (state.value.list.length && state.value.list.length % state.value.itemsPerPage === 0) {
-      state.value.paginationState.currentPage = Math.max(0, state.value.paginationState.currentPage - 1);
+    if (list.value.length && list.value.length % itemsPerPage.value === 0) {
+      paginationState.value.currentPage = Math.max(0, paginationState.value.currentPage - 1);
     }
   }
 
   const handleItemsPerPage = (newVal: number) => {
-    state.value.itemsPerPage = newVal;
+    itemsPerPage.value = newVal;
     updateTotalPagesAmount();
   }
 
   const setCurrentPage = (page: number) => {
-    state.value.paginationState.currentPage = page;
+    if (page >= 0 && page <= paginationState.value.totalPages) {
+      paginationState.value.currentPage = page;
+    }
   }
 
   const toNextPage = () => {
-    setCurrentPage(state.value.paginationState.currentPage+1);
+    setCurrentPage(paginationState.value.currentPage+1);
   }
 
   const toPrevPage = () => {
-    setCurrentPage(state.value.paginationState.currentPage-1);
+    setCurrentPage(paginationState.value.currentPage-1);
   }
 
-  const formattedList = computed(() => state.value.list.slice(state.value.paginationState.currentPage * state.value.itemsPerPage, (state.value.paginationState.currentPage+1) * state.value.itemsPerPage));
-  const isListNotEmpty = computed(() => !!state.value.list.length);
+  const formattedList = computed(() => list.value.slice(paginationState.value.currentPage * itemsPerPage.value, (paginationState.value.currentPage+1) * itemsPerPage.value));
+  const isListNotEmpty = computed(() => !!list.value.length);
+  const isReachedUpdateThreshold = computed(() => (paginationState.value.totalPages - paginationState.value.currentPage) === paginationState.value.updateThreshold);
 
   return {
     //state
-    list: state.value.list,
-    itemsPerPage: state.value.itemsPerPage,
-    paginationState: state.value.paginationState,
+    list,
+    itemsPerPage,
+    paginationState,
     //methods
     resetState,
     updateList,
@@ -82,6 +84,7 @@ export function usePagination<T>(options: IPaginationOptions = {}) {
     toNextPage,
     //computed
     formattedList,
-    isListNotEmpty
+    isListNotEmpty,
+    isReachedUpdateThreshold
   }
 }

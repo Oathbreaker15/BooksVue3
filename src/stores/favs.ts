@@ -1,4 +1,4 @@
-import { computed, toRef } from 'vue';
+import { computed, toRefs } from 'vue';
 import { defineStore } from 'pinia';
 import type { Card } from '@/types/card/card';
 import { usePagination } from '@/composition/usePagination';
@@ -7,39 +7,35 @@ export const favsStore = defineStore('favsStore', () => {
   const pagination = usePagination<Card>();
 
   const addToFavs = (item: Card) => {
-    pagination.list.push(item);
+    pagination.list.value.push(item);
     pagination.updateTotalPagesAmount();
   }
 
   const removeFromFavs = (favBookIndex: number) => {
-    pagination.list.splice(favBookIndex, 1);
+    pagination.list.value.splice(favBookIndex, 1);
     pagination.updateTotalPagesAmount();
     pagination.handleCurrentPage();
   }
 
   const isBookInFavs = (card: Card) => {
-    return pagination.list.some((book: Card) => book.key === card.key);
+    return pagination.list.value.some((book: Card) => book.key === card.key);
   }
 
   const getFavBookIndex = (card: Card) => {
-    return pagination.list.findIndex((book: Card) => book.key === card.key);
+    return pagination.list.value.findIndex((book: Card) => book.key === card.key);
   }
 
   const updateTotalPagesAmount = pagination.updateTotalPagesAmount;
-
   const handleCurrentPage = pagination.handleCurrentPage;
-
   const handleItemsPerPage = pagination.handleItemsPerPage;
-
   const formattedList = pagination.formattedList;
   const isListNotEmpty = pagination.isListNotEmpty;
-  const favsAmount = computed(() => pagination.list.length);
+
+  const favsAmount = computed(() => pagination.list.value.length);
 
   return {
     // state
-    list: toRef(pagination, 'list'),
-    itemsPerPage: toRef(pagination, 'itemsPerPage'),
-    paginationState: toRef(pagination, 'paginationState'),
+    ...toRefs(pagination),
 
     // methods
     addToFavs,

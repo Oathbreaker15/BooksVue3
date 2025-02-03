@@ -7,12 +7,13 @@ const emit = defineEmits<{
 }>()
 
 const updateSearchQuery = (query: string) => {
-  console.log(query)
   emit('update-search-query', query);
 }
 
 const handleSubmit = () => {
-  emit('submit-search')
+  setTimeout(() => {
+    emit('submit-search')
+  }, 350);
 }
 
 const debouncedUpdate = useDebounce((value: string) => {

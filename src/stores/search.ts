@@ -1,67 +1,91 @@
-import { reactive, computed, toRefs, toRef } from 'vue';
+import { ref, computed, toRefs } from 'vue';
 import { defineStore } from 'pinia';
 import type { Card } from '@/types/card/card';
 import { camalizeCardKeys } from '@/composition/camalizeCardKeys';
 import { usePagination } from '@/composition/usePagination';
+import { SearchService } from '@/services/api';
 
 const API_URL = 'https://openlibrary.org/search.json';
 
 export const searchStore = defineStore('searchStore',() => {
   const pagination = usePagination<Card>();
 
-  const state = reactive({
-    loading: false,
-    numFound: 0,
-    searchQuery: '',
-    offset: 0,
-    hasBeenSearched: false,
-  });
-
+  const loading = ref(false);
+  const numFound = ref(0);
+  const searchQuery = ref('');
+  const offset = ref(0);
+  const hasBeenSearched = ref(false);
+  const loadingMoreBooks = ref(false);
   
   const loadList = async(query: string) => {
-    const res = await fetch(`${API_URL}?q=${query}`);
-    return res.json();
+    return await SearchService.searchBooks(query);
   }
 
   const fetchBooks = async() => {
     try {
-      state.loading = true;
+      loading.value = true;
+      offset.value = 0;
       pagination.resetState();
-      const data = await loadList(state.searchQuery);      
+      const data = await loadList(searchQuery.value);      
       const mappedDocs = data.docs.map((el: Card) => camalizeCardKeys<object>(el));
-      pagination.list.splice(0, pagination.list.length, ...mappedDocs);
-      pagination.updateTotalPagesAmount();
-      state.numFound = data.numFound;          
+      handlePagination(mappedDocs);
+      numFound.value = data.numFound;          
     } catch (e) {
       console.error('Error updating model:', e); 
     } finally {
-      state.loading = false;
-      state.hasBeenSearched = !!state.searchQuery.length;
+      loading.value = false;
+      hasBeenSearched.value = !!searchQuery.value.length;
     }
   }
 
+  const fetchMoreBooks = async() => {
+    // const isLoadingMoreBooksAvailable = pagination.isReachedUpdateThreshold && (offset.value < numFound.value) && !loadingMoreBooks.value;
+    
+    try {
+      if (isLoadingMoreBooksAvailable.value) {
+        loadingMoreBooks.value = true;
+        const data = await SearchService.fetchMoreBooks(searchQuery.value, offset.value, numFound.value);
+        const mappedDocs = data.docs.map((el: Card) => camalizeCardKeys<object>(el));
+        handlePagination(mappedDocs);
+      }
+    } catch (e) {
+      console.error('Error updating model:', e); 
+    } finally {
+      loadingMoreBooks.value = false;
+    }
+  }
+
+  const handlePagination = (mappedDocs: Card[]) => {
+    offset.value += mappedDocs.length;
+    pagination.updateList(mappedDocs)
+    pagination.updateTotalPagesAmount();
+  }
+
   const updateSearchQuery = (query: string) => {
-    state.searchQuery = query;
+    searchQuery.value = query;
   }
 
   const resetSearchedState = () => {
-    state.hasBeenSearched = false;
+    hasBeenSearched.value = false;
   }
 
-  const isSearchEmpty = computed(() => !pagination.list.length && state.searchQuery.length && state.hasBeenSearched);
+  const isSearchEmpty = computed(() => !pagination.isListNotEmpty && searchQuery.value.length && hasBeenSearched.value);
+  const isLoadingMoreBooksAvailable = computed(() => pagination.isReachedUpdateThreshold && (offset.value < numFound.value) && !loadingMoreBooks.value);
 
   return {
     //state
-    ...toRefs(state),
-    list: toRef(pagination, 'list'),
-    itemsPerPage: toRef(pagination, 'itemsPerPage'),
-    paginationState: toRef(pagination, 'paginationState'),
-
+    loading,
+    numFound,
+    searchQuery,
+    offset,
+    hasBeenSearched,
+    ...toRefs(pagination),
     //methods
     loadList,
     fetchBooks,
     updateSearchQuery,
     resetSearchedState,
+    fetchMoreBooks,
     updateTotalPagesAmount: pagination.updateTotalPagesAmount,
     handleCurrentPage: pagination.handleCurrentPage,
     handleItemsPerPage: pagination.handleItemsPerPage,
