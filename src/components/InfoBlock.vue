@@ -3,13 +3,13 @@ import { toRefs } from 'vue';
 
 type AllowedImageClasses = 'nothing-found' | 'books';
 
-interface Props {
+interface IProps {  
   header: string
   textContent: string
   imgClass: AllowedImageClasses
 }
 
-const props = defineProps<Props>();
+const props = defineProps<IProps>();
 
 const { header, textContent, imgClass } = toRefs(props);
 </script>

@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia';
 import TheSearch from '@/components/TheSearch.vue';
 import CardList from '@/components/CardList.vue';
 import ThePagination from '@/components/ThePagination.vue';
-import loadingAnimationWhileSearching from '@/components/loadingAnimationWhileSearching.vue';
+import loadingAnimation from '@/components/loadingAnimation.vue';
 import InfoBlock from '@/components/InfoBlock.vue';
 import { searchStore } from '@/stores/search';
 import { initResizeHandler } from '@/composition/handleResize';
@@ -28,10 +28,15 @@ const isReachedUpdateThresholdComputed = computed(() => {
   return isReachedUpdateThreshold.value;
 });
 
+const prepareFetchBooks = (query: string) => {
+  // можно сделать alert или тост с текстом "пустое значение недопустимо", но какая же лень, Господь прости грешного
+  if (!query.length || query === searchQuery.value) return;
+  updateSearchQuery(query);
+  fetchBooks();
+}
+
 watch(() => searchQuery.value, (newSearchQuery) => {
-  if (!newSearchQuery.length) {
-    resetSearchedState();
-  }
+  if (!newSearchQuery.length) resetSearchedState();
 })
 
 watch(() => isReachedUpdateThreshold.value, () => {
@@ -41,10 +46,10 @@ watch(() => isReachedUpdateThreshold.value, () => {
 </script>
 
 <template>
-  <TheSearch @update-search-query="updateSearchQuery" @submit-search="fetchBooks" />
+  <TheSearch @submit-search="prepareFetchBooks" />
 
   <transition-group name="fade">
-    <loadingAnimationWhileSearching v-if="loading" key="1" />
+    <loadingAnimation v-if="loading" key="1" />
 
     <section v-else :class="['books-tile', { '_empty': !list.length }]" key="2">
       <h2 v-if="isListNotEmpty" class="books-tile__header">Найдено книг – {{ numFound }}</h2>
@@ -68,7 +73,6 @@ watch(() => isReachedUpdateThreshold.value, () => {
 
 <style scoped lang="scss">
 @import '@/styles/mixins.scss';
-@import '@/styles/vars.scss';
 
 .fade-enter-active {
   transition: opacity 0.5s ease;

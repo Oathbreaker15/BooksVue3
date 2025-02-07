@@ -17,7 +17,7 @@ initResizeHandler(store);
 <template>
   <section :class="['books-tile', { '_empty': !list.length }]" key="2">
     <template v-if="isListNotEmpty">
-      <h2 class="books-tile__header">Избранные книги</h2>
+      <h2 class="books-tile__header">Избранные книги ({{ list.length }} шт.)</h2>
       <CardList v-if="list.length" :list="formattedList" />
     </template>
 

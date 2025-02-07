@@ -1,22 +1,26 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { favsStore } from '@/stores/favs';
+import { selectedCardStore } from '@/stores/selectedCard';
 import type { Card } from '@/types/card/card';
 import bookImg from '@/assets/icons/black-book.svg';
+import { RouterLink } from 'vue-router';
+import { COVER_URL } from '@/services/api';
 
-interface Props {
+interface IProps {
   card: Card
 }
 
-const props = defineProps<Props>();
+const props = defineProps<IProps>();
 const { card } = props;
-const store = favsStore();
-const { removeFromFavs, addToFavs, getFavBookIndex, isBookInFavs } = store;
+const { removeFromFavs, addToFavs, getFavBookIndex, isBookInFavs } = favsStore();
+const selectedCard = selectedCardStore();
+const { prepareBeforeFetch } = selectedCard;
 let isBookSelected = ref(isBookInFavs(card));
 
 const imgLink = computed(() => {
   return card.coverEditionKey
-    ? `https://covers.openlibrary.org/b/olid/${card.coverEditionKey}-M.jpg`
+    ? `${COVER_URL}/b/olid/${card.coverEditionKey}-M.jpg`
     : bookImg;
 });
 
@@ -37,14 +41,14 @@ const toggleFavorite = () => {
 </script>
 
 <template>
-  <article class="books-item">
+  <RouterLink to="/card">
+    <article @click="prepareBeforeFetch(card)" class="books-item">
     <div class="books-item__img">
       <img :src="imgLink" :alt="card.title" loading="lazy" @error="handleImageError">
     </div>
 
     <section class="books-item__content">
       <section class="books-item__content-info">
-        <p class="books-item__content-info-genre">{{ card.subject?.[0] ?? 'Жанр не указан' }}</p>
         <h2 class="books-item__content-info-title">{{ card.title }}</h2>
         <p class="books-item__content-info-author">{{ card.authorName?.[0] ?? 'Автор не указан' }}</p>
       </section>
@@ -55,6 +59,7 @@ const toggleFavorite = () => {
       </button>
     </section>
   </article>
+  </RouterLink>
 </template>
 
 <style scoped lang="scss">
@@ -147,13 +152,16 @@ const toggleFavorite = () => {
       align-items: center;
       cursor: pointer;
 
-      &:hover {
+      @media screen and (min-width: 1095px) {
+        &:hover {
         background-color: $white;
 
-        &::before {
-          background: url(@/assets/icons/favorite-white.svg);
+          &::before {
+            background: url(@/assets/icons/favorite-white.svg);
+          }
         }
       }
+
 
       &:active {
         background: #bbb;
@@ -213,10 +221,12 @@ const toggleFavorite = () => {
       border: 2px solid transparent;
       cursor: pointer;
 
-      &:hover {
-        background-color: $white;
-        color: $main;
-        border-color: $main;
+      @media screen and (min-width: 1095px) {
+        &:hover {
+          background-color: $white;
+          color: $main;
+          border-color: $main;
+        }
       }
     }
   }
@@ -255,9 +265,11 @@ const toggleFavorite = () => {
     }
   }
 
-  &:hover {
-    background-color: $main;
-    color: $white;
+  @media screen and (min-width: 1095px) {
+    &:hover {
+      background-color: $main;
+      color: $white;
+    }
   }
 }
 </style>

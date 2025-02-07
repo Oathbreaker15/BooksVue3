@@ -21,3 +21,9 @@ h1 {
   font-size: 32px;
   line-height: 40px;
 }
+
+@media (max-width: 639px) {
+  .content:has(.header.__sticky) {
+    padding-top: 64px;
+  }
+}

@@ -22,7 +22,7 @@ export const favsStore = defineStore('favsStore', () => {
   }
 
   const getFavBookIndex = (card: Card) => {
-    return pagination.list.value.findIndex((book: Card) => book.key === card.key);
+    return pagination.list.value.indexOf(card);
   }
 
   const updateTotalPagesAmount = pagination.updateTotalPagesAmount;

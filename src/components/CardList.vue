@@ -3,11 +3,11 @@
   import CardItem from './CardItem.vue';
   import type { Card } from '@/types/card/card';
 
-  interface Props {
+  interface IProps {
     list: Card[]
   }
 
-  const props = defineProps<Props>();
+  const props = defineProps<IProps>();
 
   const { list } = toRefs(props);
 </script>

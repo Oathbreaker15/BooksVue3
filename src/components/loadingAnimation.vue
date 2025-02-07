@@ -1,9 +1,9 @@
 <script setup lang="ts">
-interface Props {
+interface IProps {
   text?: string
 }
 
-withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<IProps>(), {
   text: 'ПОИСК'
 })
 </script>
@@ -35,6 +35,11 @@ withDefaults(defineProps<Props>(), {
 
   &__inner {
     position: relative;
+  }
+
+  @media (max-width: 639px) {
+    font-size: 24px;
+    line-height: 32px;
   }
 }
 </style>

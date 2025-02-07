@@ -2,13 +2,14 @@
 import { toRefs } from 'vue';
 import type { Card } from '@/types/card/card';
 import type { PaginationState } from '@/types/pagination/paginationState';
+import { useDeviceType } from '@/composition/useDeviceType';
 
-interface Props {
+interface IProps {
   list: Card[],
   paginationState: PaginationState,
 }
 
-const props = defineProps<Props>();
+const props = defineProps<IProps>();
 
 const { list, paginationState } = toRefs(props);
 
@@ -17,11 +18,19 @@ const emit = defineEmits<{
   'to-prev-page': []
 }>()
 
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+const {isMobile} = useDeviceType();
+
 const toNextPage = () => {
+  if (isMobile.value) scrollToTop();
   emit('to-next-page');
 }
 
 const toPrevPage = () => {
+  if (isMobile.value) scrollToTop();
   emit('to-prev-page');
 }
 </script>

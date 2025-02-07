@@ -1,19 +1,35 @@
 <script setup lang="ts">
 import { RouterLink, useRoute } from 'vue-router';
-import { computed } from 'vue';
+import { computed, ref, onUnmounted } from 'vue';
 
-interface Props {
+interface IProps {
   favsAmount: number
 }
 
-const props = defineProps<Props>()
+const props = defineProps<IProps>()
 
 const route = useRoute();
-const path = computed(() => route.path)
+const path = computed(() => route.path);
+
+const isSticky = ref(false);
+const scrollThreshold  = 64;
+const isMobile = computed(() => window.innerWidth <= 639);
+
+const handleScroll = () => {
+  if (isMobile.value) {
+    isSticky.value = window.scrollY > scrollThreshold;
+  }
+};
+
+window.addEventListener('scroll', handleScroll);
+
+onUnmounted(()=>{
+  window.removeEventListener('scroll', handleScroll);
+})
 </script>
 
 <template>
-  <header class="header">
+  <header :class="['header', {'__sticky': isSticky}]">
     <RouterLink to="/" class="header-link">
       <div class="header__logo">B</div>
     </RouterLink>
@@ -29,7 +45,7 @@ const path = computed(() => route.path)
       <section :class="['favorites-btn', { '_active': path === '/favorites' }]">
         <div class="favorites-btn__icon"></div>
         <span class="favorites-btn__title">Избранное</span>
-        <div class="favorites-btn__count">{{ props.favsAmount }}</div>
+        <div :class="['favorites-btn__count', { '__hidden': !props.favsAmount }]">{{ props.favsAmount }}</div>
       </section>
     </RouterLink>
   </header>
@@ -74,22 +90,9 @@ const path = computed(() => route.path)
   &__icon {
     @include iconsCommonSize();
     background: url(@/assets/icons/search.svg) no-repeat 0 0;
-    background-size: cover;
   }
 
-  &__title {
-    margin-left: 12px;
-    text-decoration: none;
-    color: $main;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  &._active {
-    font-weight: bold;
-  }
+  @include headerBtnCommon();
 }
 
 .favorites-btn,
@@ -104,18 +107,9 @@ const path = computed(() => route.path)
   &__icon {
     @include iconsCommonSize();
     background: url(@/assets/icons/favorites.svg) no-repeat 0 0;
-    background-size: cover;
   }
 
-  &__title {
-    margin-left: 12px;
-    text-decoration: none;
-    color: $main;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
+  @include headerBtnCommon();
 
   &__count {
     width: 24px;
@@ -128,10 +122,6 @@ const path = computed(() => route.path)
     align-items: center;
     justify-content: center;
   }
-
-  &._active {
-    font-weight: bold;
-  }
 }
 
 @media (max-width: 639px) {
@@ -139,7 +129,15 @@ const path = computed(() => route.path)
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 24px 0;
+    padding: 12px 0;
+
+    &.__sticky {
+      position: fixed;
+      top: 0;
+      z-index: 1;
+      background: white;
+      width: calc(100% - 32px);
+    }
   }
 
   .search-book-btn__title,
@@ -162,9 +160,9 @@ const path = computed(() => route.path)
   .favorites-btn {
     border: 2px solid transparent;
     margin-left: 8px;
+    position: relative;
 
     &._active {
-      margin-left: 16px;
       @include activeMobIcon();
     }
 
@@ -173,8 +171,16 @@ const path = computed(() => route.path)
     }
 
     &__count {
-      display: none;
+      position: absolute;
+        z-index: 1;
+        background: white;
+        font-weight: bold;
+        top: -10px;
     }
   }
 }
+
+.__hidden {
+    display: none;
+  }
 </style>

@@ -5,8 +5,6 @@ import { camalizeCardKeys } from '@/composition/camalizeCardKeys';
 import { usePagination } from '@/composition/usePagination';
 import { SearchService } from '@/services/api';
 
-const API_URL = 'https://openlibrary.org/search.json';
-
 export const searchStore = defineStore('searchStore',() => {
   const pagination = usePagination<Card>();
 
@@ -17,7 +15,7 @@ export const searchStore = defineStore('searchStore',() => {
   const hasBeenSearched = ref(false);
   const loadingMoreBooks = ref(false);
   
-  const loadList = async(query: string) => {
+  const searchBooks = async(query: string, offset?: number, limit?: number) => {
     return await SearchService.searchBooks(query);
   }
 
@@ -26,7 +24,7 @@ export const searchStore = defineStore('searchStore',() => {
       loading.value = true;
       offset.value = 0;
       pagination.resetState();
-      const data = await loadList(searchQuery.value);      
+      const data = await searchBooks(searchQuery.value);      
       const mappedDocs = data.docs.map((el: Card) => camalizeCardKeys<object>(el));
       handlePagination(mappedDocs);
       numFound.value = data.numFound;          
@@ -39,12 +37,10 @@ export const searchStore = defineStore('searchStore',() => {
   }
 
   const fetchMoreBooks = async() => {
-    // const isLoadingMoreBooksAvailable = pagination.isReachedUpdateThreshold && (offset.value < numFound.value) && !loadingMoreBooks.value;
-    
     try {
       if (isLoadingMoreBooksAvailable.value) {
         loadingMoreBooks.value = true;
-        const data = await SearchService.fetchMoreBooks(searchQuery.value, offset.value, numFound.value);
+        const data = await SearchService.searchBooks(searchQuery.value, offset.value);
         const mappedDocs = data.docs.map((el: Card) => camalizeCardKeys<object>(el));
         handlePagination(mappedDocs);
       }
@@ -57,7 +53,7 @@ export const searchStore = defineStore('searchStore',() => {
 
   const handlePagination = (mappedDocs: Card[]) => {
     offset.value += mappedDocs.length;
-    pagination.updateList(mappedDocs)
+    pagination.appendToList(mappedDocs)
     pagination.updateTotalPagesAmount();
   }
 
@@ -70,7 +66,7 @@ export const searchStore = defineStore('searchStore',() => {
   }
 
   const isSearchEmpty = computed(() => !pagination.isListNotEmpty && searchQuery.value.length && hasBeenSearched.value);
-  const isLoadingMoreBooksAvailable = computed(() => pagination.isReachedUpdateThreshold && (offset.value < numFound.value) && !loadingMoreBooks.value);
+  const isLoadingMoreBooksAvailable = computed(() => pagination.isReachedUpdateThreshold.value && (offset.value < numFound.value) && !loadingMoreBooks.value);
 
   return {
     //state
@@ -81,7 +77,6 @@ export const searchStore = defineStore('searchStore',() => {
     hasBeenSearched,
     ...toRefs(pagination),
     //methods
-    loadList,
     fetchBooks,
     updateSearchQuery,
     resetSearchedState,
@@ -91,7 +86,6 @@ export const searchStore = defineStore('searchStore',() => {
     handleItemsPerPage: pagination.handleItemsPerPage,
     toPrevPage: pagination.toPrevPage,
     toNextPage: pagination.toNextPage,
-
     //computed
     formattedList: pagination.formattedList,
     isListNotEmpty: pagination.isListNotEmpty,

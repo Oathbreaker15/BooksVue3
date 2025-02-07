@@ -1,33 +1,26 @@
 <script setup lang="ts">
-import { useDebounce } from '@/composition/useDebounce';
-
 const emit = defineEmits<{
-  'update-search-query': [string],
-  'submit-search': []
+  'submit-search': [string]
 }>()
 
-const updateSearchQuery = (query: string) => {
-  emit('update-search-query', query);
+const handleSubmit = (e: Event) => {
+  if (!(e instanceof SubmitEvent)) return;
+  const target = e.currentTarget;
+  if (!(target instanceof HTMLFormElement)) return;
+  const value = new FormData(target).get('search')?.toString() || '';
+  emit('submit-search', value);
 }
-
-const handleSubmit = () => {
-  setTimeout(() => {
-    emit('submit-search')
-  }, 350);
-}
-
-const debouncedUpdate = useDebounce((value: string) => {
-  updateSearchQuery(value);
-}, 300);
 </script>
 
 <template>
   <section class="search-book">
     <form class="search-book__form" @submit.prevent="handleSubmit">
       <span class="search-book__text-input-icon"></span>
-      <input class="search-book__text-input" type="text"
-        @input="debouncedUpdate(($event.target as HTMLInputElement).value)" placeholder="Найти книгу или автора...">
-      <button class="search-book__submit-btn" type="submit"></button>
+      <input class="search-book__text-input" 
+              type="text" 
+              name="search"
+              placeholder="Найти книгу или автора...">
+      <button class="search-book__submit-btn" type="submit" aria-label="Найти"></button>
     </form>
   </section>
 </template>
@@ -93,6 +86,21 @@ const debouncedUpdate = useDebounce((value: string) => {
 @media (max-width: 639px) {
   .search-book {
     padding: 0;
+
+    &__text-input {
+      padding: 12px 12px 12px 32px;
+      height: 40px;
+
+      &-icon {
+        left: 8px;
+        top: 9px;
+      }
+    }
+
+    &__submit-btn {
+      width: 40px;
+      height: 40px;
+    }
   }
 }
 </style>

@@ -26,12 +26,11 @@ export function usePagination<T>(options: IPaginationOptions = {}) {
   };
 
   const resetState = () => {
-    // list.value.splice(0, list.value.length);
     list.value.length = 0;
     setInitialPaginationState();
   }
 
-  const updateList = (newList: T[]) => {
+  const appendToList = (newList: T[]) => {
     const spliceFromIndex = list.value.length;
     list.value.splice(spliceFromIndex, list.value.length + newList.length, ...newList as UnwrapRef<T[]>);
   }
@@ -76,7 +75,7 @@ export function usePagination<T>(options: IPaginationOptions = {}) {
     paginationState,
     //methods
     resetState,
-    updateList,
+    appendToList,
     updateTotalPagesAmount,
     handleCurrentPage,
     handleItemsPerPage,

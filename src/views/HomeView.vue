@@ -1,12 +1,7 @@
 <script setup lang="ts">
-  import {ref} from 'vue';
   import mobileBackground from '@/assets/back.jpg';
-
-  let isMobile = ref(window.innerWidth < 640);
-
-  window.addEventListener('resize', ()=>{
-    isMobile.value = window.innerWidth < 640;
-  });
+  import { useDeviceType } from '@/composition/useDeviceType';
+  const {isMobile} = useDeviceType();
 </script>
 
 <template>
