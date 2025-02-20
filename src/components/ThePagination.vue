@@ -1,49 +1,56 @@
 <script setup lang="ts">
-import { toRefs } from 'vue';
-import type { Card } from '@/types/card/card';
-import type { PaginationState } from '@/types/pagination/paginationState';
-import { useDeviceType } from '@/composition/useDeviceType';
+import { toRefs } from 'vue'
+import type { Card } from '@/types/card/card'
+import type { PaginationState } from '@/types/pagination/paginationState'
+import { useDeviceType } from '@/composition/useDeviceType'
 
 interface IProps {
-  list: Card[],
-  paginationState: PaginationState,
+  list: Card[]
+  paginationState: PaginationState
 }
 
-const props = defineProps<IProps>();
+const props = defineProps<IProps>()
 
-const { list, paginationState } = toRefs(props);
+const { list, paginationState } = toRefs(props)
 
 const emit = defineEmits<{
-  'to-next-page': [],
+  'to-next-page': []
   'to-prev-page': []
 }>()
 
 const scrollToTop = () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
-const {isMobile} = useDeviceType();
+const { isMobile } = useDeviceType()
 
 const toNextPage = () => {
-  if (isMobile.value) scrollToTop();
-  emit('to-next-page');
+  if (isMobile.value) scrollToTop()
+  emit('to-next-page')
 }
 
 const toPrevPage = () => {
-  if (isMobile.value) scrollToTop();
-  emit('to-prev-page');
+  if (isMobile.value) scrollToTop()
+  emit('to-prev-page')
 }
 </script>
 
 <template>
   <section class="pagination" v-if="list.length">
-    <section v-if="paginationState.currentPage > 0" @click="toPrevPage" class="pagination-nav__prev">
+    <section
+      v-if="paginationState.currentPage > 0"
+      @click="toPrevPage"
+      class="pagination-nav__prev"
+    >
       <div class="pagination-nav__icon--prev"></div>
       <div class="pagination-nav__text">Предыдущая страница</div>
     </section>
 
-    <section v-if="paginationState.currentPage !== paginationState.totalPages" @click="toNextPage"
-      class="pagination-nav__next">
+    <section
+      v-if="paginationState.currentPage !== paginationState.totalPages"
+      @click="toNextPage"
+      class="pagination-nav__next"
+    >
       <div class="pagination-nav__text">Следующая страница</div>
       <div class="pagination-nav__icon--next"></div>
     </section>
@@ -73,7 +80,6 @@ const toPrevPage = () => {
 
   &-nav {
     &__icon {
-
       &--prev,
       &--next {
         width: 20px;

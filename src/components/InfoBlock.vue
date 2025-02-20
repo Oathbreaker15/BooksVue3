@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { toRefs } from 'vue';
+import { toRefs } from 'vue'
 
-type AllowedImageClasses = 'nothing-found' | 'books';
+type AllowedImageClasses = 'nothing-found' | 'books'
 
-interface IProps {  
+interface IProps {
   header: string
   textContent: string
   imgClass: AllowedImageClasses
 }
 
-const props = defineProps<IProps>();
+const props = defineProps<IProps>()
 
-const { header, textContent, imgClass } = toRefs(props);
+const { header, textContent, imgClass } = toRefs(props)
 </script>
 
 <template>

@@ -1,29 +1,27 @@
-import { onUnmounted } from 'vue';
+import { onBeforeUnmount } from 'vue'
 
 export function useDebounce<Args extends unknown[]>(
-  callback: (...args: Args) => void, 
+  callback: (...args: Args) => void,
   delay: number
 ) {
-  let timeout: number | null = null;
+  let timeout: number | null = null
 
   const resetTimeout = () => {
     if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
+      clearTimeout(timeout)
+      timeout = null
     }
   }
 
   const debounce = (...args: Args) => {
-    resetTimeout();
+    resetTimeout()
 
     timeout = setTimeout(() => {
-      callback(...args);
-    }, delay);
+      callback(...args)
+    }, delay)
   }
 
-  onUnmounted(() => {
-    resetTimeout();
-  })
+  onBeforeUnmount(() => resetTimeout)
 
-  return debounce;
+  return debounce
 }

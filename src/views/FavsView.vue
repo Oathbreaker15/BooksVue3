@@ -1,37 +1,41 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import CardList from '@/components/CardList.vue';
-import ThePagination from '@/components/ThePagination.vue';
-import InfoBlock from '@/components/InfoBlock.vue';
-import { initResizeHandler } from '@/composition/handleResize';
+import { storeToRefs } from 'pinia'
+import CardList from '@/components/CardList.vue'
+import ThePagination from '@/components/ThePagination.vue'
+import InfoBlock from '@/components/InfoBlock.vue'
+import { initResizeHandler } from '@/composition/handleResize'
 
-import { favsStore } from '@/stores/favs';
+import { favsStore } from '@/stores/favs'
 
-const store = favsStore();
-const { list, formattedList, paginationState, isListNotEmpty } = storeToRefs(store);
-const { toPrevPage, toNextPage } = store;
+const store = favsStore()
+const { list, formattedList, paginationState, isListNotEmpty } = storeToRefs(store)
+const { toPrevPage, toNextPage } = store
 
-initResizeHandler(store);
+initResizeHandler(store)
 </script>
 
 <template>
-  <section :class="['books-tile', { '_empty': !list.length }]" key="2">
+  <section :class="['books-tile', { _empty: !list.length }]" key="2">
     <template v-if="isListNotEmpty">
       <h2 class="books-tile__header">Избранные книги ({{ list.length }} шт.)</h2>
       <CardList v-if="list.length" :list="formattedList" />
     </template>
 
-    <InfoBlock v-else 
-              :header="'Здесь пока ничего нет'"
-              :text-content="'Добавляйте любимые книги из поиска, чтобы создать коллекцию.'" 
-              :img-class="'books'" />
+    <InfoBlock
+      v-else
+      :header="'Здесь пока ничего нет'"
+      :text-content="'Добавляйте любимые книги из поиска, чтобы создать коллекцию.'"
+      :img-class="'books'"
+    />
   </section>
 
-  <ThePagination v-if="isListNotEmpty" 
-                    :list="list" 
-                    :pagination-state="paginationState" 
-                    @to-prev-page="toPrevPage"
-                    @to-next-page="toNextPage" />
+  <ThePagination
+    v-if="isListNotEmpty"
+    :list="list"
+    :pagination-state="paginationState"
+    @to-prev-page="toPrevPage"
+    @to-next-page="toNextPage"
+  />
 </template>
 
 <style scoped lang="scss">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RouterLink, useRoute } from 'vue-router';
-import { computed, ref, onUnmounted } from 'vue';
+import { RouterLink, useRoute } from 'vue-router'
+import { computed, ref, onBeforeUnmount } from 'vue'
 
 interface IProps {
   favsAmount: number
@@ -8,44 +8,46 @@ interface IProps {
 
 const props = defineProps<IProps>()
 
-const route = useRoute();
-const path = computed(() => route.path);
+const route = useRoute()
+const path = computed(() => route.path)
 
-const isSticky = ref(false);
-const scrollThreshold  = 64;
-const isMobile = computed(() => window.innerWidth <= 639);
+const isSticky = ref(false)
+const scrollThreshold = 64
+const isMobile = computed(() => window.innerWidth <= 639)
 
 const handleScroll = () => {
   if (isMobile.value) {
-    isSticky.value = window.scrollY > scrollThreshold;
+    isSticky.value = window.scrollY > scrollThreshold
   }
-};
+}
 
-window.addEventListener('scroll', handleScroll);
+window.addEventListener('scroll', handleScroll)
 
-onUnmounted(()=>{
-  window.removeEventListener('scroll', handleScroll);
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll)
 })
 </script>
 
 <template>
-  <header :class="['header', {'__sticky': isSticky}]">
+  <header :class="['header', { __sticky: isSticky }]">
     <RouterLink to="/" class="header-link">
       <div class="header__logo">B</div>
     </RouterLink>
 
     <RouterLink to="/search" class="search-book-btn-wrapper">
-      <section :class="['search-book-btn', { '_active': path === '/search' }]">
+      <section :class="['search-book-btn', { _active: path === '/search' }]">
         <div class="search-book-btn__icon"></div>
         <span class="search-book-btn__title">Поиск книг</span>
       </section>
     </RouterLink>
 
     <RouterLink to="/favorites" class="favorites-btn-wrapper">
-      <section :class="['favorites-btn', { '_active': path === '/favorites' }]">
+      <section :class="['favorites-btn', { _active: path === '/favorites' }]">
         <div class="favorites-btn__icon"></div>
         <span class="favorites-btn__title">Избранное</span>
-        <div :class="['favorites-btn__count', { '__hidden': !props.favsAmount }]">{{ props.favsAmount }}</div>
+        <div :class="['favorites-btn__count', { __hidden: !props.favsAmount }]">
+          {{ props.favsAmount }}
+        </div>
       </section>
     </RouterLink>
   </header>
@@ -172,15 +174,15 @@ onUnmounted(()=>{
 
     &__count {
       position: absolute;
-        z-index: 1;
-        background: white;
-        font-weight: bold;
-        top: -10px;
+      z-index: 1;
+      background: white;
+      font-weight: bold;
+      top: -10px;
     }
   }
 }
 
 .__hidden {
-    display: none;
-  }
+  display: none;
+}
 </style>

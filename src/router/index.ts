@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import SearchView from '@/views/SearchView.vue';
-import FavsView from '@/views/FavsView.vue';
-import HomeView from '@/views/HomeView.vue';
-import CardView from '@/views/CardView.vue';
+import SearchView from '@/views/SearchView.vue'
+import FavsView from '@/views/FavsView.vue'
+import HomeView from '@/views/HomeView.vue'
+import CardView from '@/views/CardView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,9 +15,9 @@ const router = createRouter({
         title: 'Books',
         metaTags: [
           { name: 'description', content: 'Находите и добавляйте в избранное любимые книги.' },
-          { name: 'keywords', content: 'книги, коллекция книг, хранилище книг' },
-        ],
-      },
+          { name: 'keywords', content: 'книги, коллекция книг, хранилище книг' }
+        ]
+      }
     },
     {
       path: '/search',
@@ -25,10 +25,8 @@ const router = createRouter({
       component: SearchView,
       meta: {
         title: 'Books - Страница поиска',
-        metaTags: [
-          { name: 'description', content: 'Страница поиска приложения Books.' },
-        ],
-      },
+        metaTags: [{ name: 'description', content: 'Страница поиска приложения Books.' }]
+      }
     },
     {
       path: '/favorites',
@@ -36,17 +34,16 @@ const router = createRouter({
       component: FavsView,
       meta: {
         title: 'Books - Страница избранного',
-        metaTags: [
-          { name: 'description', content: 'Страница избранного приложения Books.' },
-        ],
-      },
+        metaTags: [{ name: 'description', content: 'Страница избранного приложения Books.' }]
+      }
     },
     {
       path: '/card',
       name: 'Card',
       component: CardView,
+      props: true
     }
   ]
 })
 
-export default router;
+export default router

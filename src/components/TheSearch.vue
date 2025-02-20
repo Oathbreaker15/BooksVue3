@@ -4,11 +4,11 @@ const emit = defineEmits<{
 }>()
 
 const handleSubmit = (e: Event) => {
-  if (!(e instanceof SubmitEvent)) return;
-  const target = e.currentTarget;
-  if (!(target instanceof HTMLFormElement)) return;
-  const value = new FormData(target).get('search')?.toString() || '';
-  emit('submit-search', value);
+  if (!(e instanceof SubmitEvent)) return
+  const target = e.currentTarget
+  if (!(target instanceof HTMLFormElement)) return
+  const value = new FormData(target).get('search')?.toString() || ''
+  emit('submit-search', value)
 }
 </script>
 
@@ -16,10 +16,12 @@ const handleSubmit = (e: Event) => {
   <section class="search-book">
     <form class="search-book__form" @submit.prevent="handleSubmit">
       <span class="search-book__text-input-icon"></span>
-      <input class="search-book__text-input" 
-              type="text" 
-              name="search"
-              placeholder="Найти книгу или автора...">
+      <input
+        class="search-book__text-input"
+        type="text"
+        name="search"
+        placeholder="Найти книгу или автора..."
+      />
       <button class="search-book__submit-btn" type="submit" aria-label="Найти"></button>
     </form>
   </section>

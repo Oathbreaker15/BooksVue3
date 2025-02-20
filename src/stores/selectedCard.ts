@@ -1,69 +1,73 @@
-import { computed, ref } from 'vue';
-import { defineStore } from 'pinia';
-import type { SelectedCard } from '@/interfaces/selectedCard';
-import type { Card } from '@/types/card/card';
-import { camalizeCardKeys } from '@/composition/camalizeCardKeys';
-import { API_URL } from '@/services/api';
+import { ref } from 'vue'
+import { defineStore } from 'pinia'
+import type { SelectedCard } from '@/interfaces/selectedCard'
+import type { Card } from '@/types/card/card'
+import { camalizeCardKeys } from '@/composition/camalizeCardKeys'
+import { API_URL } from '@/services/api'
+import { localStorageService } from '@/services/localStorage'
+import { safeParseJson } from '@/utils/localStorageUtils'
 
 export const selectedCardStore = defineStore('selectedCard', () => {
-  const initialCardData = ref<Card | null>(null);
-  const selectedCard = ref<SelectedCard | null>(null);
-  const selectedCardId = ref<string>('');
+  const initialCardData = ref<Card | null>(null)
+  const selectedCard = ref<SelectedCard | null>(
+    safeParseJson<SelectedCard>(localStorageService.getItem('selectedCard'))
+  )
 
-  const addToSelected = (book: SelectedCard) => {
-    selectedCard.value = book;
+  const setSelectedCard = (card: SelectedCard) => {
+    selectedCard.value = card
+    localStorageService.setItem('selectedCard', JSON.stringify(selectedCard.value))
   }
 
-  const setId = (id: string) => {
-    selectedCardId.value = id;
+  const prepareCardObj = (card: Card) => {
+    initialCardData.value = {
+      ...card,
+      cardId: card.key.replace('/works/', '')
+    }
   }
 
-  const setInitialCardData = (card: Card) => {
-    initialCardData.value = card;
-  }
+  const fetchSelectedCard = async () => {
+    if (selectedCard.value !== null) return
 
-  const prepareBeforeFetch = (card: Card) => {
-    setInitialCardData(card);
-    setId(card.key.replace('/works/', ''));
-  }
-
-  const fetchBook = async () => {
     try {
       const [res, bookRes] = await Promise.all([
-        fetch(`${API_URL}/works/${selectedCardId.value}.json`),
-        fetch(`${API_URL}/books/${selectedCardId.value}.json`)
-      ]);
+        fetch(`${API_URL}/works/${initialCardData.value?.cardId}.json`),
+        fetch(`${API_URL}/books/${initialCardData.value?.cardId}.json`)
+      ])
 
-      if (!res.ok || !bookRes.ok) throw new Error('Search request failed');
+      if (!res.ok || !bookRes.ok) throw new Error('Search request failed')
 
-      const [result, bookResult] = await Promise.all([res.json(), bookRes.json()]);
+      const [result, bookResult] = await Promise.all([res.json(), bookRes.json()])
 
       const book = camalizeCardKeys<SelectedCard>({
         author_name: initialCardData.value?.authorName[0],
         number_of_pages: bookResult.number_of_pages,
         ...result,
         ...initialCardData.value
-      });
+      })
 
-      addToSelected(book);
+      setSelectedCard(book)
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   }
 
   const clearSelectedCard = () => {
-    selectedCard.value = null;
-    selectedCardId.value = '';
-    initialCardData.value = null;
+    selectedCard.value = null
+    localStorageService.removeItem('selectedId')
+    initialCardData.value = null
   }
 
-  const getSelectedCardId = computed(() => selectedCardId.value);
+  const fetchNewSelectedCard = async (card: Card) => {
+    clearSelectedCard()
+    prepareCardObj(card)
+    await fetchSelectedCard()
+  }
 
   return {
     selectedCard,
-    getSelectedCardId,
-    prepareBeforeFetch,
-    fetchBook,
+    prepareCardObj,
+    fetchSelectedCard,
+    fetchNewSelectedCard,
     clearSelectedCard
   }
-});
+})
