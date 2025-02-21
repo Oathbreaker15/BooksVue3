@@ -2,6 +2,7 @@ import { computed, toRefs } from 'vue'
 import { defineStore } from 'pinia'
 import type { Card } from '@/types/card/card'
 import { usePagination } from '@/composition/usePagination'
+import { localStorageService } from '@/services/localStorage'
 
 export const favsStore = defineStore('favsStore', () => {
   const pagination = usePagination<Card>()
@@ -9,12 +10,14 @@ export const favsStore = defineStore('favsStore', () => {
   const addToFavs = (item: Card) => {
     pagination.list.value.push(item)
     pagination.updateTotalPagesAmount()
+    localStorageService.setItem('favsList', JSON.stringify(pagination.list.value))
   }
 
   const removeFromFavs = (favBookIndex: number) => {
     pagination.list.value.splice(favBookIndex, 1)
     pagination.updateTotalPagesAmount()
     pagination.handleCurrentPage()
+    localStorageService.setItem('favsList', JSON.stringify(pagination.list.value))
   }
 
   const isBookInFavs = (card: Card) => {

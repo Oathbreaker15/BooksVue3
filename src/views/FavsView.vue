@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import CardList from '@/components/CardList.vue'
 import ThePagination from '@/components/ThePagination.vue'
@@ -9,9 +10,13 @@ import { favsStore } from '@/stores/favs'
 
 const store = favsStore()
 const { list, formattedList, paginationState, isListNotEmpty } = storeToRefs(store)
-const { toPrevPage, toNextPage } = store
+const { toPrevPage, toNextPage, checkListFromCache } = store
 
 initResizeHandler(store)
+
+onMounted(() => {
+  checkListFromCache('favsList')
+})
 </script>
 
 <template>

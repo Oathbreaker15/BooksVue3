@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import TheHeader from '@/components/TheHeader.vue'
 import { favsStore } from '@/stores/favs'
 
 const favStore = favsStore()
 const favsAmount = computed(() => favStore.favsAmount)
+const { checkListFromCache } = favStore
+
+onMounted(() => {
+  checkListFromCache('favsList')
+})
 </script>
 
 <template>

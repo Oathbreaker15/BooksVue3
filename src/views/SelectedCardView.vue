@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
 import { selectedCardStore } from '@/stores/selectedCard'
 import bookImg from '@/assets/icons/black-book.svg'
 import LoadingAnimation from '@/components/loadingAnimation.vue'
@@ -8,7 +9,10 @@ import { favsStore } from '@/stores/favs'
 import type { Card } from '@/types/card/card'
 import { COVER_URL } from '@/services/api'
 
+const router = useRoute();
+
 const { selectedCard } = storeToRefs(selectedCardStore())
+const { fetchNewSelectedCard } = selectedCardStore()
 const { removeFromFavs, addToFavs, isBookInFavs, getFavBookIndex } = favsStore()
 const authorsShowLimit = 2
 const tagsShowLimit = 5
@@ -25,6 +29,10 @@ const descriptionHandler = computed(() =>
     ? selectedCard.value?.description
     : selectedCard.value?.description?.value
 )
+
+onMounted(() => {
+  fetchNewSelectedCard(router.params.id as string)
+})
 </script>
 
 <template>

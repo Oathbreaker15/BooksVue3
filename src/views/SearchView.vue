@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, computed } from 'vue'
+import { watch, computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import TheSearch from '@/components/TheSearch.vue'
 import CardList from '@/components/CardList.vue'
@@ -10,6 +10,7 @@ import { searchStore } from '@/stores/search'
 import { initResizeHandler } from '@/composition/handleResize'
 
 const store = searchStore()
+
 const {
   list,
   searchQuery,
@@ -21,14 +22,19 @@ const {
   isSearchEmpty,
   isReachedUpdateThreshold
 } = storeToRefs(store)
+
 const {
   toPrevPage,
   toNextPage,
   updateSearchQuery,
   fetchBooks,
   resetSearchedState,
-  fetchMoreBooks
+  fetchMoreBooks,
+  checkListFromCache,
+  checkNumFoundFromCache,
+  checkSearchQueryFromCache
 } = store
+
 initResizeHandler(store)
 
 const isReachedUpdateThresholdComputed = computed(() => {
@@ -55,6 +61,12 @@ watch(
     if (isReachedUpdateThresholdComputed.value) fetchMoreBooks()
   }
 )
+
+onMounted(() => {
+  checkListFromCache('searchList')
+  checkNumFoundFromCache()
+  checkSearchQueryFromCache()
+})
 </script>
 
 <template>

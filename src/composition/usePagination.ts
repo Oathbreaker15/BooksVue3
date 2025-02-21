@@ -1,5 +1,7 @@
 import { computed, ref } from 'vue'
 import type { UnwrapRef } from 'vue'
+import { safeParseJson } from '@/utils/localStorageUtils'
+import { localStorageService } from '@/services/localStorage'
 
 interface IPaginationState {
   currentPage: number
@@ -77,11 +79,18 @@ export function usePagination<T>(options: IPaginationOptions = {}) {
     )
   )
   const isListNotEmpty = computed(() => !!list.value.length)
+
   const isReachedUpdateThreshold = computed(
     () =>
       paginationState.value.totalPages - paginationState.value.currentPage ===
       paginationState.value.updateThreshold
   )
+
+  const checkListFromCache = (key: string) => {
+    if (localStorageService.getItem(key)) {
+      list.value = safeParseJson<T[]>(localStorageService.getItem(key)) as UnwrapRef<T[]>;
+    }
+  };
 
   return {
     //state
@@ -96,6 +105,7 @@ export function usePagination<T>(options: IPaginationOptions = {}) {
     handleItemsPerPage,
     toPrevPage,
     toNextPage,
+    checkListFromCache,
     //computed
     formattedList,
     isListNotEmpty,

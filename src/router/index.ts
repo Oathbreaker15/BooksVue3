@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SearchView from '@/views/SearchView.vue'
 import FavsView from '@/views/FavsView.vue'
 import HomeView from '@/views/HomeView.vue'
-import CardView from '@/views/CardView.vue'
+import CardView from '@/views/SelectedCardView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,7 +38,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/card',
+      path: '/card/:id',
       name: 'Card',
       component: CardView,
       props: true

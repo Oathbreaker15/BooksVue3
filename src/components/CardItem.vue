@@ -4,12 +4,14 @@ import { favsStore } from '@/stores/favs'
 import { selectedCardStore } from '@/stores/selectedCard'
 import type { Card } from '@/types/card/card'
 import bookImg from '@/assets/icons/black-book.svg'
-import { RouterLink } from 'vue-router'
+import { useRouter, RouterLink } from 'vue-router'
 import { COVER_URL } from '@/services/api'
 
 interface IProps {
   card: Card
 }
+
+const router = useRouter()
 
 const props = defineProps<IProps>()
 const { card } = props
@@ -24,6 +26,8 @@ const imgLink = computed(() => {
 
 const favBooksIndex = computed(() => getFavBookIndex(card))
 
+const cardId = card.key.replace('/works/', '')
+
 const handleImageError = (event: Event) => {
   const img = event.target as HTMLImageElement
   img.src = bookImg
@@ -37,8 +41,8 @@ const toggleFavorite = () => {
 </script>
 
 <template>
-  <RouterLink to="/card">
-    <article @click="fetchNewSelectedCard(card)" class="books-item">
+  <RouterLink :to="{ name: 'Card', params: { id: cardId } }">
+    <article class="books-item">
       <div class="books-item__img">
         <img :src="imgLink" :alt="card.title" loading="lazy" @error="handleImageError" />
       </div>
