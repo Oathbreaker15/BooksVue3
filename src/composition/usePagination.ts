@@ -3,13 +3,13 @@ import type { UnwrapRef } from 'vue'
 import { safeParseJson } from '@/utils/localStorageUtils'
 import { localStorageService } from '@/services/localStorage'
 
-interface IPaginationState {
+export interface IPaginationState {
   currentPage: number
   totalPages: number
   updateThreshold: number
 }
 
-interface IPaginationOptions {
+export interface IPaginationOptions {
   initialItemsOnPageCnt?: number
 }
 

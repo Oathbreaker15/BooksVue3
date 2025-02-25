@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import SearchView from '@/views/SearchView.vue'
-import FavsView from '@/views/FavsView.vue'
-import HomeView from '@/views/HomeView.vue'
-import CardView from '@/views/SelectedCardView.vue'
+
+const SearchView = () => import('@/views/SearchView.vue')
+const FavsView = () => import('@/views/FavsView.vue')
+const HomeView = () => import('@/views/HomeView.vue')
+const SelectedCardView = () => import('@/views/SelectedCardView.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,7 +41,7 @@ const router = createRouter({
     {
       path: '/card/:id',
       name: 'Card',
-      component: CardView,
+      component: SelectedCardView,
       props: true
     }
   ]
