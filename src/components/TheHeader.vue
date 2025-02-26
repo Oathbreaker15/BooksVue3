@@ -40,23 +40,6 @@ onBeforeUnmount(() => {
     <SearchButton :is-active="path === '/search'" />
 
     <FavsButton :is-active="path === '/favorites'" :count="props.favsAmount" />
-
-    <!-- <RouterLink to="/search" class="search-book-btn-wrapper">
-      <section :class="['search-book-btn', { _active: path === '/search' }]">
-        <div class="search-book-btn__icon"></div>
-        <span class="search-book-btn__title">Поиск книг</span>
-      </section>
-    </RouterLink> -->
-
-    <!-- <RouterLink to="/favorites" class="favorites-btn-wrapper">
-      <section :class="['favorites-btn', { _active: path === '/favorites' }]">
-        <div class="favorites-btn__icon"></div>
-        <span class="favorites-btn__title">Избранное</span>
-        <div :class="['favorites-btn__count', { _hidden: !props.favsAmount }]">
-          {{ props.favsAmount }}
-        </div>
-      </section>
-    </RouterLink> -->
   </header>
 </template>
 
