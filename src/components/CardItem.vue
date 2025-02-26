@@ -1,23 +1,18 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { favsStore } from '@/stores/favs'
-import { selectedCardStore } from '@/stores/selectedCard'
 import type { Card } from '@/types/card/card'
 import bookImg from '@/assets/icons/black-book.svg'
-import { useRouter, RouterLink } from 'vue-router'
+import { RouterLink } from 'vue-router'
 import { COVER_URL } from '@/services/api'
 
 interface IProps {
   card: Card
 }
 
-const router = useRouter()
-
 const props = defineProps<IProps>()
 const { card } = props
 const { removeFromFavs, addToFavs, getFavBookIndex, isBookInFavs } = favsStore()
-const selectedCard = selectedCardStore()
-const { fetchNewSelectedCard } = selectedCard
 const isBookSelected = ref(isBookInFavs(card))
 
 const imgLink = computed(() => {
@@ -43,8 +38,14 @@ const toggleFavorite = () => {
 <template>
   <RouterLink :to="{ name: 'Card', params: { id: cardId } }">
     <article class="books-item">
-      <div class="books-item__img">
-        <img :src="imgLink" :alt="card.title" loading="lazy" @error="handleImageError" />
+      <div class="books-item__img-wrapper">
+        <img
+          class="books-item__img"
+          :src="imgLink"
+          :alt="card.title"
+          loading="lazy"
+          @error="handleImageError"
+        />
       </div>
 
       <section class="books-item__content">
@@ -84,40 +85,37 @@ const toggleFavorite = () => {
   }
 
   &__img {
-    padding: 12px;
-    box-sizing: border-box;
-    background: $book-item-background;
+    width: 100%;
+    height: 100%;
+    max-height: 384px;
+    min-height: 384px;
 
-    img {
-      width: 100%;
-      height: 100%;
-      max-height: 384px;
-      min-height: 384px;
+    &-wrapper {
+      padding: 12px;
+      box-sizing: border-box;
+      background: $book-item-background-color;
     }
+  }
+
+  &__content {
+    padding: 12px 10px;
+    background: $main-color;
+    color: $white-color;
+    position: absolute;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   @media screen and (min-width: 1095px) {
     &__content {
-      padding: 12px 10px;
-      background: $main;
-      color: $white;
-      position: absolute;
       bottom: -68px;
-      width: 100%;
-      box-sizing: border-box;
       transition: bottom 0.2s ease-out;
     }
   }
 
   @media screen and (max-width: 1095px) {
     &__content {
-      padding: 12px 10px;
-      background: $main;
-      color: $white;
-      position: absolute;
       bottom: 0;
-      width: 100%;
-      box-sizing: border-box;
     }
   }
 
@@ -145,8 +143,8 @@ const toggleFavorite = () => {
     &-fav-btn_active {
       width: 36px;
       height: 32px;
-      background: $main;
-      border: 2px solid $white;
+      background: $main-color;
+      border: 2px solid $white-color;
       border-radius: 6px;
       margin-top: 38px;
       display: flex;
@@ -156,7 +154,7 @@ const toggleFavorite = () => {
 
       @media screen and (min-width: 1095px) {
         &:hover {
-          background-color: $white;
+          background-color: $white-color;
 
           &::before {
             background: url(@/assets/icons/favorite-white.svg);
@@ -176,7 +174,7 @@ const toggleFavorite = () => {
       }
 
       &_active {
-        background-color: $white;
+        background-color: $white-color;
 
         &::before {
           background: url(@/assets/icons/favorite-white.svg);
@@ -193,14 +191,6 @@ const toggleFavorite = () => {
 .book-page__info {
   display: flex;
 
-  img {
-    max-width: 165px;
-    max-height: 214px;
-    width: 100%;
-    height: 100%;
-    margin-right: 20px;
-  }
-
   &-content {
     display: flex;
     flex-direction: column;
@@ -216,17 +206,17 @@ const toggleFavorite = () => {
     &-fav-btn {
       width: 160px;
       height: 40px;
-      background-color: $main;
-      color: $white;
+      background-color: $main-color;
+      color: $white-color;
       border-radius: 8px;
       border: 2px solid transparent;
       cursor: pointer;
 
       @media screen and (min-width: 1095px) {
         &:hover {
-          background-color: $white;
-          color: $main;
-          border-color: $main;
+          background-color: $white-color;
+          color: $main-color;
+          border-color: $main-color;
         }
       }
     }
@@ -249,7 +239,7 @@ const toggleFavorite = () => {
   box-sizing: border-box;
   padding: 6px;
   border-radius: 8px;
-  border: 2px solid $main;
+  border: 2px solid $main-color;
   cursor: pointer;
 
   &s {
@@ -268,8 +258,8 @@ const toggleFavorite = () => {
 
   @media screen and (min-width: 1095px) {
     &:hover {
-      background-color: $main;
-      color: $white;
+      background-color: $main-color;
+      color: $white-color;
     }
   }
 }

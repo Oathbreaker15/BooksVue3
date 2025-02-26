@@ -36,13 +36,13 @@ const toPrevPage = () => {
 </script>
 
 <template>
-  <section class="pagination" v-if="list.length">
+  <section class="pagination-nav" v-if="list.length">
     <section
       v-if="paginationState.currentPage > 0"
       @click="toPrevPage"
       class="pagination-nav__prev"
     >
-      <div class="pagination-nav__icon--prev"></div>
+      <div class="pagination-nav__icon_prev"></div>
       <div class="pagination-nav__text">Предыдущая страница</div>
     </section>
 
@@ -52,53 +52,52 @@ const toPrevPage = () => {
       class="pagination-nav__next"
     >
       <div class="pagination-nav__text">Следующая страница</div>
-      <div class="pagination-nav__icon--next"></div>
+      <div class="pagination-nav__icon_next"></div>
     </section>
   </section>
 </template>
 
 <style scoped lang="scss">
-.pagination {
+.pagination-nav {
   display: flex;
   justify-content: space-between;
   padding: 20px 30px;
   margin-top: auto;
 
-  &-nav__next {
+  &__next {
     margin-left: auto;
   }
 
-  &-nav__prev,
-  &-nav__next {
+  &__prev,
+  &__next {
     display: flex;
     cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
+    @media screen and (min-width: 1095px) {
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 
-  &-nav {
-    &__icon {
-      &--prev,
-      &--next {
-        width: 20px;
-        height: 20px;
-        background: url(@/assets/icons/pagination_arrow.svg) no-repeat 0 0;
-      }
+  &__icon {
+    &_prev,
+    &_next {
+      width: 20px;
+      height: 20px;
+      background: url(@/assets/icons/pagination_arrow.svg) no-repeat 0 0;
+    }
 
-      &--next {
-        rotate: 180deg;
-      }
+    &_next {
+      rotate: 180deg;
     }
   }
 }
 
 @media (max-width: 639px) {
-  .pagination {
+  .pagination-nav {
     padding: 16px 0;
 
-    &-nav__text {
+    &__text {
       display: none;
     }
   }

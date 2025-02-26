@@ -9,7 +9,7 @@ import { favsStore } from '@/stores/favs'
 import type { Card } from '@/types/card/card'
 import { COVER_URL } from '@/services/api'
 
-const router = useRoute();
+const router = useRoute()
 
 const { selectedCard } = storeToRefs(selectedCardStore())
 const { fetchNewSelectedCard } = selectedCardStore()
@@ -43,39 +43,39 @@ onMounted(() => {
       <h2 class="book-card__header">{{ selectedCard.title }}</h2>
 
       <section class="book-card__content">
-        <img class="book-card__img" :src="imgLink" :alt="selectedCard.title" />
+        <img class="book-card__content-img" :src="imgLink" :alt="selectedCard.title" />
 
-        <section class="book-card__info">
-          <div v-if="selectedCard.authorName?.length === 1" class="book-card__info-author">
-            Автор: <span class="__bold">{{ selectedCard.authorName[0] }}</span>
+        <section class="book-card__content-info">
+          <div v-if="selectedCard.authorName?.length === 1" class="book-card__content-info-author">
+            Автор: <span class="g-bold">{{ selectedCard.authorName[0] }}</span>
           </div>
 
-          <div v-else class="book-card__info-author">
+          <div v-else class="book-card__content-info-author">
             Авторы:
             <span
               v-for="(author, i) in selectedCard.authorName.slice(0, authorsShowLimit)"
               :key="i"
             >
-              <span class="__bold">{{ author }}</span
-              ><span v-if="i !== authorsShowLimit">,</span>
+              <span class="g-bold">{{ author }}</span>
+              <span v-if="i !== authorsShowLimit">,</span>
             </span>
           </div>
 
-          <div v-if="selectedCard.subjects?.length" class="book-card__info-genre">
-            Жанр: <span class="__bold">{{ selectedCard.subjects[0] }}</span>
+          <div v-if="selectedCard.subjects?.length" class="book-card__content-info-genre">
+            Жанр: <span class="g-bold">{{ selectedCard.subjects[0] }}</span>
           </div>
 
-          <div v-if="selectedCard.revision" class="book-card__info-revision">
-            Редакция: <span class="__bold">{{ selectedCard.revision }}</span>
+          <div v-if="selectedCard.revision" class="book-card__content-info-revision">
+            Редакция: <span class="g-bold">{{ selectedCard.revision }}</span>
           </div>
 
-          <div v-if="selectedCard.numberOfPages" class="book-card__info-pages">
-            Количество страниц: <span class="__bold">{{ selectedCard.numberOfPages }}</span>
+          <div v-if="selectedCard.numberOfPages" class="book-card__content-info-pages">
+            Количество страниц: <span class="g-bold">{{ selectedCard.numberOfPages }}</span>
           </div>
 
           <button
             @click="isFav ? removeFromFavs(getFavBookIndex(selectedCard)) : addToFavs(selectedCard)"
-            class="book-card__info-fav-btn"
+            class="book-card__content-info-fav-btn"
             :aria-label="isFav ? 'Удалить из избранного' : 'Добавить в избранное'"
           >
             {{ isFav ? 'Удалить из избранного' : 'В избранное' }}
@@ -84,12 +84,12 @@ onMounted(() => {
       </section>
 
       <section v-if="descriptionHandler" class="book-card__description">
-        <div class="book-card__description-title __bold">Описание:</div>
+        <div class="book-card__description-title g-bold">Описание:</div>
         <p class="book-card__description-text">{{ descriptionHandler }}</p>
       </section>
 
       <section v-if="selectedCard.subjects?.length" class="book-card__tags-content">
-        <div class="book-card__tags-title __bold">Теги:</div>
+        <div class="book-card__tags-title g-bold">Теги:</div>
 
         <div class="book-card__tags">
           <span
@@ -107,6 +107,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 @import '@/styles/vars.scss';
+@import '@/styles/global.scss';
 
 .book-card {
   &__header {
@@ -119,49 +120,49 @@ onMounted(() => {
     gap: 20px;
   }
 
-  &__img {
+  &__content-img {
     border-radius: 8px;
     width: 165px;
     height: 214px;
-    background: $book-item-background;
+    background: $book-item-background-color;
   }
 
-  &__info {
+  &__content-info {
     display: flex;
     flex-direction: column;
   }
 
-  &__info > * {
+  &__content-info > * {
     line-height: 22px;
   }
 
-  &__info-genre,
-  &__info-revision,
-  &__info-pages {
+  &__content-info-genre,
+  &__content-info-revision,
+  &__content-info-pages {
     margin-top: 12px;
   }
 
-  &__info-fav-btn {
+  &__content-info-fav-btn {
     box-sizing: border-box;
     margin-top: auto;
     width: 162px;
     height: 40px;
     border-radius: 8px;
-    color: $white;
-    background-color: $main;
+    color: $white-color;
+    background-color: $main-color;
     border: 2px solid transparent;
 
     @media (min-width: 1095px) {
       &:hover {
         cursor: pointer;
-        background: $white;
-        color: $main;
-        border-color: $main;
+        background: $white-color;
+        color: $main-color;
+        border-color: $main-color;
       }
     }
 
     &:active {
-      background: $book-item-background;
+      background: $book-item-background-color;
     }
   }
 
@@ -170,6 +171,7 @@ onMounted(() => {
 
     &-text {
       margin: 0;
+      margin-top: 8px;
     }
   }
 
@@ -192,10 +194,6 @@ onMounted(() => {
     border: 2px solid black;
     border-radius: 8px;
   }
-}
-
-.__bold {
-  font-weight: bold;
 }
 
 @media (max-width: 639px) {

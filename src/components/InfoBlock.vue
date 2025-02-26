@@ -15,25 +15,23 @@ const { header, textContent, imgClass } = toRefs(props)
 </script>
 
 <template>
-  <section class="info_block__wrapper">
-    <h1 class="info_block__header">{{ header }}</h1>
+  <section class="info-block">
+    <h1 class="info-block__header g-heading-1">{{ header }}</h1>
 
     <section v-if="imgClass?.length" :class="`info_block__img _${imgClass}`" />
-    <div class="info_block__info">
+    <div class="info-block__info">
       {{ textContent }}
     </div>
   </section>
 </template>
 
 <style scoped lang="scss">
-.info_block {
-  &__wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-  }
+.info-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 
   &__header {
     margin-top: 0;

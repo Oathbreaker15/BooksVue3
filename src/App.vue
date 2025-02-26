@@ -22,8 +22,10 @@ onMounted(() => {
 </template>
 
 <style lang="scss">
-@import '@/styles/global.scss';
+@use '@/styles/global.scss' as *;
+</style>
 
+<style scoped lang="scss">
 .content {
   box-sizing: border-box;
   max-width: 1344px;
@@ -36,7 +38,7 @@ onMounted(() => {
 }
 
 @media (max-width: 639px) {
-  h1 {
+  .heading-1 {
     font-size: 23px;
     line-height: 32px;
   }

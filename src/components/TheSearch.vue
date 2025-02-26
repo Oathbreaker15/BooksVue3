@@ -13,16 +13,16 @@ const handleSubmit = (e: Event) => {
 </script>
 
 <template>
-  <section class="search-book">
-    <form class="search-book__form" @submit.prevent="handleSubmit">
-      <span class="search-book__text-input-icon"></span>
+  <section class="search">
+    <form class="search__form" @submit.prevent="handleSubmit">
+      <span class="search__text-input-icon"></span>
       <input
-        class="search-book__text-input"
+        class="search__text-input"
         type="text"
         name="search"
         placeholder="Найти книгу или автора..."
       />
-      <button class="search-book__submit-btn" type="submit" aria-label="Найти"></button>
+      <button class="search__submit-btn" type="submit" aria-label="Найти"></button>
     </form>
   </section>
 </template>
@@ -30,7 +30,7 @@ const handleSubmit = (e: Event) => {
 <style scoped lang="scss">
 @import '@/styles/vars.scss';
 
-.search-book {
+.search {
   padding: 0 30px;
 
   &__form {
@@ -43,14 +43,14 @@ const handleSubmit = (e: Event) => {
   &__text-input {
     width: 100%;
     padding: 12px 0 12px 48px;
-    background-color: $book-item-background;
+    background-color: $book-item-background-color;
     height: 56px;
     border: none;
     box-sizing: border-box;
     border-radius: 5px;
 
     &::placeholder {
-      color: $main;
+      color: $main-color;
     }
   }
 
@@ -70,7 +70,7 @@ const handleSubmit = (e: Event) => {
     align-items: center;
     width: 56px;
     height: 56px;
-    background: $main;
+    background: $main-color;
     border-radius: 5px;
     border: none;
     flex-shrink: 0;
@@ -86,7 +86,7 @@ const handleSubmit = (e: Event) => {
 }
 
 @media (max-width: 639px) {
-  .search-book {
+  .search {
     padding: 0;
 
     &__text-input {

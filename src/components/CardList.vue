@@ -13,7 +13,7 @@ const { list } = toRefs(props)
 </script>
 
 <template>
-  <section class="books-tile__wrapper">
+  <section class="books-grid">
     <CardItem v-for="card in list" :key="card.key" :card="card" />
   </section>
 </template>
@@ -22,7 +22,7 @@ const { list } = toRefs(props)
 @import '@/styles/mixins.scss';
 @import '@/styles/vars.scss';
 
-.books-tile__wrapper {
+.books-grid {
   display: grid;
   grid-auto-rows: 1fr;
   column-gap: 24px;
