@@ -4,7 +4,7 @@ export function useDebounce<Args extends unknown[]>(
   callback: (...args: Args) => void,
   delay: number
 ) {
-  let timeout: number | null = null
+  let timeout: ReturnType<typeof setTimeout> | null = null
 
   const resetTimeout = () => {
     if (timeout) {

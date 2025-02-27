@@ -1,34 +1,18 @@
 <script setup lang="ts">
 import { RouterLink, useRoute } from 'vue-router'
-import { computed, ref, onBeforeUnmount } from 'vue'
+import { computed } from 'vue'
 import SearchButton from './TheHeaderButtons/SearchButton.vue'
 import FavsButton from './TheHeaderButtons/FavsButton.vue'
-import { useDeviceType } from '@/composition/useDeviceType'
 
 interface IProps {
   favsAmount: number
+  isSticky: boolean
 }
 
 const props = defineProps<IProps>()
 
 const route = useRoute()
 const path = computed(() => route.path)
-
-const isSticky = ref(false)
-const scrollThreshold = 64
-const { isMobile } = useDeviceType()
-
-const handleScroll = () => {
-  if (isMobile.value) {
-    isSticky.value = window.scrollY > scrollThreshold
-  }
-}
-
-window.addEventListener('scroll', handleScroll)
-
-onBeforeUnmount(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
 </script>
 
 <template>
@@ -81,6 +65,20 @@ onBeforeUnmount(() => {
       z-index: 1;
       background: white;
       width: calc(100% - 32px);
+      padding: 12px 16px;
+      left: 0;
+
+      &::before {
+        content: '';
+        display: block;
+        position: absolute;
+        left: -16px;
+        bottom: 0;
+        width: 100vw;
+        z-index: 1;
+        height: 12px;
+        box-shadow: 0 7px 8px 0 rgba(0, 13, 51, 0.12);
+      }
     }
   }
 }

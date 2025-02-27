@@ -72,7 +72,7 @@ defineProps<IProps>()
       margin-left: 8px;
       position: relative;
 
-      &._active {
+      &_active {
         @include activeMobIcon();
       }
 

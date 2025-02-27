@@ -25,9 +25,3 @@ div#app {
 .g-bold {
   font-weight: bold;
 }
-
-@media (max-width: 639px) {
-  .content:has(.header.__sticky) {
-    padding-top: 64px;
-  }
-}

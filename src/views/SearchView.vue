@@ -75,7 +75,7 @@ onMounted(() => {
   <transition-group name="fade">
     <loadingAnimation v-if="loading" key="1" />
 
-    <section v-else :class="['books-tile', { _empty: !list.length }]" key="2">
+    <section v-else :class="['books-tile', { 'books-tile_empty': !list.length }]" key="2">
       <h2 v-if="isListNotEmpty" class="books-tile__header">Найдено книг – {{ numFound }}</h2>
 
       <CardList v-if="list.length" :list="formattedList" />
@@ -121,7 +121,7 @@ onMounted(() => {
   padding: 30px;
   box-sizing: border-box;
 
-  &._empty {
+  &_empty {
     flex-grow: 1;
   }
 
@@ -134,16 +134,6 @@ onMounted(() => {
 @media (max-width: 639px) {
   .books-tile {
     padding: 0;
-  }
-
-  .info_block {
-    &__wrapper {
-      text-align: center;
-    }
-
-    &__info {
-      margin-top: 0;
-    }
   }
 
   .loading {

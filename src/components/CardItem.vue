@@ -58,7 +58,10 @@ const toggleFavorite = () => {
 
         <button
           @click.prevent.stop="toggleFavorite"
-          :class="`books-item__content-fav-btn${isBookSelected ? '_active' : ''}`"
+          :class="[
+            'books-item__content-fav-btn',
+            { 'books-item__content-fav-btn_active': isBookSelected }
+          ]"
           :aria-label="isBookSelected ? 'Удалить из избранного' : 'Добавить в избранное'"
         ></button>
       </section>
@@ -89,12 +92,12 @@ const toggleFavorite = () => {
     height: 100%;
     max-height: 384px;
     min-height: 384px;
+  }
 
-    &-wrapper {
-      padding: 12px;
-      box-sizing: border-box;
-      background: $book-item-background-color;
-    }
+  &__img-wrapper {
+    padding: 12px;
+    box-sizing: border-box;
+    background: $book-item-background-color;
   }
 
   &__content {
@@ -137,10 +140,10 @@ const toggleFavorite = () => {
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
     }
 
-    &-fav-btn,
-    &-fav-btn_active {
+    &-fav-btn {
       width: 36px;
       height: 32px;
       background: $main-color;

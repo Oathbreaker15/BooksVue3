@@ -20,7 +20,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section :class="['books-tile', { _empty: !list.length }]" key="2">
+  <section :class="['books-tile', { 'books-tile_empty': !list.length }]" key="2">
     <template v-if="isListNotEmpty">
       <h2 class="books-tile__header">Избранные книги ({{ list.length }} шт.)</h2>
       <CardList v-if="list.length" :list="formattedList" />
@@ -48,7 +48,7 @@ onMounted(() => {
   padding: 30px;
   box-sizing: border-box;
 
-  &._empty {
+  &_empty {
     flex-grow: 1;
   }
 

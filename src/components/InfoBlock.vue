@@ -18,7 +18,7 @@ const { header, textContent, imgClass } = toRefs(props)
   <section class="info-block">
     <h1 class="info-block__header g-heading-1">{{ header }}</h1>
 
-    <section v-if="imgClass?.length" :class="`info_block__img _${imgClass}`" />
+    <section v-if="imgClass?.length" :class="['info_block__img', `info_block__img_${imgClass}`]" />
     <div class="info-block__info">
       {{ textContent }}
     </div>
@@ -41,12 +41,12 @@ const { header, textContent, imgClass } = toRefs(props)
     width: 184px;
     height: 184px;
 
-    &._nothing-found {
+    &_nothing-found {
       background: url(@/assets/icons/nothing-found.svg) no-repeat 0 0;
       background-size: cover;
     }
 
-    &._books {
+    &_books {
       background: url(@/assets/icons/books.svg) no-repeat 0 0;
       background-size: cover;
     }
